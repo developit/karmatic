@@ -1,6 +1,6 @@
 # Karmatic [![npm](https://img.shields.io/npm/v/karmatic.svg)](https://npm.im/karmatic) [![travis](https://travis-ci.org/developit/karmatic.svg?branch=master)](https://travis-ci.org/developit/karmatic)
 
-A simplified zero-configuration wrapper around [Karma] + [Webpack] + [Jasmine].
+A simplified zero-configuration wrapper around [Karma], [Webpack], [Jasmine] & [Puppeteer].
 
 
 ## Why do I want this?
@@ -49,3 +49,4 @@ karmatic '**/*Spec.jsx?'
 [Karma]: https://karma-runner.github.io
 [Webpack]: https://webpack.js.org
 [Jasmine]: https://jasmine.github.io
+[Puppeteer]: https://github.com/GoogleChrome/puppeteer
