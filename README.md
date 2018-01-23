@@ -1,5 +1,7 @@
 # Karmatic [![npm](https://img.shields.io/npm/v/karmatic.svg)](https://npm.im/karmatic) [![travis](https://travis-ci.org/developit/karmatic.svg?branch=master)](https://travis-ci.org/developit/karmatic)
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/developit/karmatic.svg)](https://greenkeeper.io/)
+
 A simplified zero-configuration wrapper around [Karma] + [Webpack] + [Jasmine].
 
 
