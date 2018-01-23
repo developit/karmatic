@@ -1,0 +1,52 @@
+{
+  "name": "karmatic",
+  "version": "1.0.0",
+  "description": "Autmated testing via Karma.",
+  "main": "dist/index.js",
+  "module": "dist/index.m.js",
+  "bin": "dist/cli.js",
+  "scripts": {
+    "prepare": "npm t",
+    "build": "microbundle --target node --external all -f cjs --no-compress src/*.js",
+    "test:build": "node ./dist/cli.js run",
+    "test": "eslint src test && npm run -s build && npm run -s test:build",
+    "release": "npm run -s prepare && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
+  },
+  "eslintConfig": {
+    "extends": "eslint-config-developit"
+  },
+  "keywords": [
+    "karma",
+    "chrome",
+    "test runner"
+  ],
+  "author": "Jason Miller <jason@developit.ca> (http://jasonformat.com)",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^4.16.0",
+    "eslint-config-developit": "^1.1.1",
+    "microbundle": "^0.3.1",
+    "workerize-loader": "^1.0.1"
+  },
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "chalk": "^2.3.0",
+    "dlv": "^1.1.1",
+    "jasmine-core": "^2.9.1",
+    "karma": "^2.0.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-jasmine": "^1.1.1",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-spec-reporter": "0.0.32",
+    "karma-webpack": "2.0.7",
+    "puppeteer": "^1.0.0",
+    "script-loader": "^0.7.2",
+    "webpack": "^3.10.0"
+  }
+}
