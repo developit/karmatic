@@ -44,7 +44,7 @@
     "karma-jasmine": "^1.1.1",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-spec-reporter": "0.0.32",
-    "karma-webpack": "2.0.7",
+    "karma-webpack": "2.0.9",
     "puppeteer": "^1.0.0",
     "script-loader": "^0.7.2",
     "webpack": "^3.10.0"
