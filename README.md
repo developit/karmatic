@@ -7,7 +7,7 @@ A simplified zero-configuration wrapper around [Karma] + [Webpack] + [Jasmine].
 
 Karma, Webpack and Jasmine are all great. They're all also quite powerful and each highly configurable. When creating and maintaining small modules, duplication of these configurations and dependencies is cumbersome.
 
-Karmatic is a zero-configuration wrapper around these tools with intelligent defaults, configuration auto-detection, and optimiations most configurations don't include.
+Karmatic is a zero-configuration wrapper around these tools with intelligent defaults, configuration auto-detection, and optimizations most configurations don't include.
 
 Most importantly, Karmatic provides a (headless) browser test harness in a single dependency.
 
