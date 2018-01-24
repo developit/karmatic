@@ -15,7 +15,8 @@ let prog = sade('karmatic');
 prog
 	.version(version)
 	.option('--files', 'Minimatch pattern for test files')
-	.option('--headless', 'Run using Chrome Headless', true);
+	.option('--headless', 'Run using Chrome Headless', true)
+	.option('--chromeDataDir', 'Save Chrome preferences');
 
 prog
 	.command('run [...files]', '', { default: true })

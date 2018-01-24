@@ -40,6 +40,16 @@ You can change this to any minimatch pattern _(note the quotes to avoid shell ex
 karmatic '**/*Spec.jsx?'
 ```
 
+### Options
+
+`--chromeDataDir <filename>`
+
+Filename to be used to save Chrome preferences between test runs. Useful for debugging tests. It is recommended to also add this filename to `.gitignore`.
+
+Example:
+```
+karmatic --chromeDataDir .chrome
+```
 
 ## License
 
