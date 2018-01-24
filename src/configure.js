@@ -31,7 +31,7 @@ export default function configure(options) {
 		'webpack.config.js'
 	];
 
-	let webpackConfig;
+	let webpackConfig = options.webpackConfig;
 
 	let pkg = tryRequire(res('package.json'));
 
@@ -46,9 +46,11 @@ export default function configure(options) {
 		}
 	}
 
-	for (let i=WEBPACK_CONFIGS.length; i--; ) {
-		webpackConfig = tryRequire(res(WEBPACK_CONFIGS[i]));
-		if (webpackConfig) break;
+	if (!webpackConfig) {
+		for (let i=WEBPACK_CONFIGS.length; i--; ) {
+			webpackConfig = tryRequire(res(WEBPACK_CONFIGS[i]));
+			if (webpackConfig) break;
+		}
 	}
 
 	webpackConfig = webpackConfig || {};
