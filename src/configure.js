@@ -169,7 +169,7 @@ export default function configure(options) {
 			}),
 			plugins: (webpackConfig.plugins || []).filter( plugin => {
 				let name = plugin && plugin.constructor.name;
-				return name!=='UglifyJSPlugin';
+				return /^\s*(UglifyJSPlugin|HTMLWebpackPlugin|ExtractTextPlugin)\s*$/gi.test(name);
 			})
 		},
 
