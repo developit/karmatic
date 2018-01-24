@@ -135,7 +135,7 @@ export default function configure(options) {
 			let matches = pattern.match(/^\*\*\/(.+)$/);
 			if (!matches) return { pattern, watched: true, served: true, included: true };
 			return [
-				{ pattern: rootFiles + matches[0], watched: true, served: true, included: true },
+				{ pattern: rootFiles + '/' + matches[0], watched: true, served: true, included: true },
 				{ pattern: matches[1], watched: true, served: true, included: true }
 			];
 		}) ),
