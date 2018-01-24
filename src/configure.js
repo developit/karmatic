@@ -8,7 +8,7 @@ import cssLoader from './lib/css-loader';
 export default function configure(options) {
 	let cwd = process.cwd(),
 		res = file => path.resolve(cwd, file);
-	
+
 	let files = options.files.filter(Boolean);
 	if (!files.length) files = ['**/{*.test.js,*_test.js}'];
 
@@ -171,7 +171,7 @@ export default function configure(options) {
 			}),
 			plugins: (webpackConfig.plugins || []).filter( plugin => {
 				let name = plugin && plugin.constructor.name;
-				return /^\s*(UglifyJSPlugin|HTMLWebpackPlugin|ExtractTextPlugin)\s*$/gi.test(name);
+				return /^\s*(UglifyJS|HTML|ExtractText|BabelMinify)(.*Webpack)?Plugin\s*$/gi.test(name);
 			})
 		},
 
