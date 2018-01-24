@@ -53,6 +53,42 @@ export default function configure(options) {
 
 	webpackConfig = webpackConfig || {};
 
+	let loaders = [].concat(delve(webpackConfig, 'module.loaders') || [], delve(webpackConfig, 'module.rules') || []);
+
+	function evaluateCondition(condition, filename, expected) {
+		if (typeof condition==='function') {
+			return condition(filename)==expected;
+		}
+		else if (condition instanceof RegExp) {
+			return condition.test(filename)==expected;
+		}
+		if (Array.isArray(condition)) {
+			for (let i=0; i<condition.length; i++) {
+				if (evaluateCondition(condition[i], filename)) return expected;
+			}
+		}
+		return !expected;
+	}
+
+	function getLoader(predicate) {
+		if (typeof predicate==='string') {
+			let filename = predicate;
+			predicate = loader => {
+				let { test, include, exclude } = loader;
+				if (exclude && evaluateCondition(exclude, filename, false)) return false;
+				if (include && !evaluateCondition(include, filename, true)) return false;
+				if (test && evaluateCondition(test, filename, true)) return true;
+				return false;
+			};
+		}
+		for (let i=0; i<loaders.length; i++) {
+			if (predicate(loaders[i])) {
+				return { index: i, loader: loaders[i] };
+			}
+		}
+		return false;
+	}
+
 	function webpackProp(name, value) {
 		let configured = delve(webpackConfig, 'resolve.alias');
 		if (Array.isArray(value)) {
@@ -111,10 +147,10 @@ export default function configure(options) {
 		webpack: {
 			devtool: 'cheap-module-eval-source-map',
 			module: {
-				loaders: [
-					babelLoader(options),
-					cssLoader(options)
-				]
+				loaders: loaders.concat(
+					!getLoader( rule => `${rule.use},${rule.loader}`.match(/\bbabel-loader\b/) ) && babelLoader(options),
+					!getLoader('foo.css') && cssLoader(options)
+				).filter(Boolean)
 			},
 			resolve: webpackProp('resolve', {
 				modules: webpackProp('resolve.modules', [
