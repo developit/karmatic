@@ -1,6 +1,6 @@
 {
   "name": "karmatic",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Zero-config automatic (headless) browser testing. Powered by Karma, Webpack & Jasmine.",
   "main": "dist/index.js",
   "module": "dist/index.m.js",
