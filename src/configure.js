@@ -167,7 +167,11 @@ export default function configure(options) {
 				modules: webpackProp('resolveLoader.modules', [
 					'node_modules',
 					path.resolve(__dirname, '../node_modules')
-				])
+				]),
+				alias: webpackProp('resolveLoader.alias', {
+					[pkg.name]: res('.'),
+					src: res('src')
+				})
 			}),
 			plugins: (webpackConfig.plugins || []).filter( plugin => {
 				let name = plugin && plugin.constructor.name;
