@@ -51,6 +51,13 @@ Example:
 karmatic --chromeDataDir .chrome
 ```
 
+## FAQ
+
+**Q**: [Is there an FAQ?](https://twitter.com/gauntface/status/956259291928776704)**
+
+> Yes.
+
+
 ## License
 
 [MIT](https://oss.ninja/mit/developit) © [developit](https://github.com/developit)
