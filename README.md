@@ -22,9 +22,9 @@ npm i -D karmatic
 
 ```js
 {
-	"scripts": {
-		"test": "karmatic"
-	}
+    "scripts": {
+    	"test": "karmatic"
+    }
 }
 ```
 
