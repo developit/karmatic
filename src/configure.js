@@ -143,7 +143,8 @@ export default function configure(options) {
 		}) ),
 
 		preprocessors: {
-			[rootFiles+'/**/*']: ['webpack']
+			[rootFiles+'/**/*']: ['webpack'],
+			[rootFiles]: ['webpack']
 		},
 
 		webpack: {
@@ -156,6 +157,7 @@ export default function configure(options) {
 			},
 			resolve: webpackProp('resolve', {
 				modules: webpackProp('resolve.modules', [
+					'node_modules',
 					path.resolve(__dirname, '../node_modules')
 				]),
 				alias: webpackProp('resolve.alias', {
