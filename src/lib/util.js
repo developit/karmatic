@@ -88,8 +88,8 @@ function highlight(text, line, count) {
 
 function outdent(str, prefix='', width=80) {
 	str = str.replace(/(^\n+|\n+$)/g, '').replace(/\t/, '    ');
-	let indents = str.match(/^[ -]+/gm);
-	let minLength = indents.reduce( (indent, value) => Math.min(indent, value.length), indents[0].length);
+	let indents = str.match(/^[ -]+/gm) || [];
+	let minLength = indents.reduce( (indent, value) => Math.min(indent, value.length), indents[0] ? indents[0].length : 0);
 	str = str.replace(/^[ -]+/gm, str => prefix+str.substring(minLength));
 	str = str.replace(/^.*$/gm, str => str.substring(0, width));
 	return str;
