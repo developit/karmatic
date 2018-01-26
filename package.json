@@ -21,6 +21,7 @@
     "test runner"
   ],
   "author": "Jason Miller <jason@developit.ca> (http://jasonformat.com)",
+  "repository": "developit/karmatic",
   "license": "MIT",
   "devDependencies": {
     "eslint": "^4.16.0",
