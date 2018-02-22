@@ -50,7 +50,7 @@ karmatic '**/*Spec.jsx?'
 
 ## Projects Using Karmatic
 
-Karmatic is pretty new! Here are some projects that have switched to it you may use as a reference:
+Karmatic is pretty new! Here are some projects that have switched to it. You may use as a reference:
 
 - [workerize-loader](https://github.com/developit/workerize-loader/commit/afaa20bbfbdec1d6a5523ec69ba2a2d5d495cfd6)
 
