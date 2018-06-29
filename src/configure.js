@@ -5,6 +5,9 @@ import { moduleDir, tryRequire, dedupe, cleanStack, readFile, readDir } from './
 import babelLoader from './lib/babel-loader';
 import cssLoader from './lib/css-loader';
 
+const WEBPACK_VERSION = String(require('webpack').version || '3.0.0');
+const WEBPACK_MAJOR = WEBPACK_VERSION.split('.')[0]|0;
+
 export default function configure(options) {
 	let cwd = process.cwd(),
 		res = file => path.resolve(cwd, file);
@@ -102,7 +105,7 @@ export default function configure(options) {
 		return Object.assign({}, configured || {}, value);
 	}
 
-	return {
+	let generatedConfig = {
 		basePath: cwd,
 		plugins: PLUGINS.map(require.resolve),
 		frameworks: ['jasmine'],
@@ -152,8 +155,10 @@ export default function configure(options) {
 
 		webpack: {
 			devtool: 'cheap-module-eval-source-map',
+			mode: webpackConfig.mode || 'development',
 			module: {
-				loaders: loaders.concat(
+				// @TODO check webpack version and use loaders VS rules as the key here appropriately:
+				rules: loaders.concat(
 					!getLoader( rule => `${rule.use},${rule.loader}`.match(/\bbabel-loader\b/) ) && babelLoader(options),
 					!getLoader('foo.css') && cssLoader(options)
 				).filter(Boolean)
@@ -199,4 +204,13 @@ export default function configure(options) {
 			}
 		}
 	};
+
+	if (WEBPACK_MAJOR < 4) {
+		delete generatedConfig.webpack.mode;
+		let { rules } = generatedConfig.webpack.module;
+		delete generatedConfig.webpack.module.rules;
+		generatedConfig.webpack.module.loaders = rules;
+	}
+
+	return generatedConfig;
 }
