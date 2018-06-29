@@ -152,6 +152,7 @@ export default function configure(options) {
 
 		webpack: {
 			devtool: 'cheap-module-eval-source-map',
+			mode: 'development',
 			module: {
 				loaders: loaders.concat(
 					!getLoader( rule => `${rule.use},${rule.loader}`.match(/\bbabel-loader\b/) ) && babelLoader(options),
