@@ -95,7 +95,7 @@ export default function configure(options) {
 	}
 
 	function webpackProp(name, value) {
-		let configured = delve(webpackConfig, 'resolve.alias');
+		let configured = delve(webpackConfig, name);
 		if (Array.isArray(value)) {
 			return value.concat(configured || []).filter(dedupe);
 		}
