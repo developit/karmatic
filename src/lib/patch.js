@@ -15,6 +15,7 @@ process.stdout.write = msg => {
 	}
 
 	// Ignore total output since we only have one browser:
+	// eslint-disable-next-line no-control-regex
 	if (msg.match(/\u001b\[32mTOTAL: /)) return;
 
 	return write.call(process.stdout, msg);
