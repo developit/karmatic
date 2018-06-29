@@ -53,6 +53,9 @@ export default function configure(options) {
 		}
 	}
 
+	if (typeof webpackConfig==='function') {
+		webpackConfig = webpackConfig({ karmatic: true }, { mode: 'development', karmatic: true });
+	}
 	webpackConfig = webpackConfig || {};
 
 	let loaders = [].concat(delve(webpackConfig, 'module.loaders') || [], delve(webpackConfig, 'module.rules') || []);
