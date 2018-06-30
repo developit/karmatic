@@ -1,6 +1,6 @@
 {
   "name": "karmatic",
-  "version": "1.1.7",
+  "version": "1.2.0",
   "description": "Zero-config automatic (headless) browser testing. Powered by Karma, Webpack & Jasmine.",
   "main": "dist/index.js",
   "module": "dist/index.m.js",
@@ -19,6 +19,9 @@
     "karma",
     "chrome",
     "test runner"
+  ],
+  "files": [
+    "dist"
   ],
   "author": "Jason Miller <jason@developit.ca> (http://jasonformat.com)",
   "repository": "developit/karmatic",
