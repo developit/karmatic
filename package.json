@@ -36,6 +36,7 @@
   "dependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
+    "babel-plugin-istanbul": "^5.1.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-polyfill": "^6.26.0",
@@ -46,6 +47,7 @@
     "jasmine-core": "^2.9.1",
     "karma": "^2.0.0",
     "karma-chrome-launcher": "^2.2.0",
+    "karma-coverage": "^1.1.2",
     "karma-jasmine": "^1.1.1",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-spec-reporter": "0.0.32",
