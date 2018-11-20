@@ -64,6 +64,8 @@ Options
     -h, --help       Displays this message
 ```
 
+To disable any option that defaults to `true`, pass `false` to the option: `--headless false` or `--coverage false`.
+
 NOTE: The `debug` option overrides the default value of the `--headless` and `--coverage` option to be `false`. This option will also open up the local Puppeteer installation of Chrome, not your globally installed one. If you'd like to debug your tests using your your own instance of Chrome (or any other browser), copy the URL from the puppeteer window into your favorite browser.
 
 
