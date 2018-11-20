@@ -41,6 +41,32 @@ karmatic '**/*Spec.jsx?'
 ```
 
 
+## Usage
+
+```text
+Usage
+    $ karmatic <command> [options]
+
+Available Commands
+    run      Run tests once and exit
+    watch    Run tests on any change
+    debug    Open a headful Puppeteer instance for debugging your tests
+
+For more info, run any command with the `--help` flag
+    $ karmatic run --help
+    $ karmatic watch --help
+
+Options
+    -v, --version    Displays current version
+    --files          Minimatch pattern for test files
+    --headless       Run using Chrome Headless  (default true)
+    --coverage       Report code coverage of tests  (default true)
+    -h, --help       Displays this message
+```
+
+NOTE: The `debug` option overrides the default value of the `--headless` and `--coverage` option to be `false`. This option will also open up the local Puppeteer installation of Chrome, not your globally installed one. If you'd like to debug your tests using your your own instance of Chrome (or any other browser), copy the URL from the puppeteer window into your favorite browser.
+
+
 ## FAQ
 
 **Q**: [Is there an FAQ?](https://twitter.com/gauntface/status/956259291928776704)**

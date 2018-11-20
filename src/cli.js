@@ -28,6 +28,13 @@ prog
 	.describe('Run tests on any change')
 	.action( (str, opts) => run(str, opts, true) );
 
+prog
+	.command('debug [...files]')
+	.describe('Open a headful Puppeteer instance for debugging your tests')
+	.option('--headless', 'Run using Chrome Headless', false) // Override default to false
+	.option('--coverage', 'Report code coverage of tests', false) // Override default to false
+	.action( (str, opts) => run(str, opts, true) );
+
 prog.parse(process.argv);
 
 function run(str, opts, isWatch) {
