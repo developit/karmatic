@@ -28,7 +28,7 @@ npm i -D webpack karmatic
 }
 ```
 
-... now you can run your tests using `npm t`.
+... now you can run your tests using `npm t`. Here's a [minimal example repo](https://gist.github.com/developit/acd8a075350eeb6574439e92888c50cf).
 
 
 ### Test File Patterns
