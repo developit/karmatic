@@ -27,7 +27,9 @@ export default function configure(options) {
 		'karma-spec-reporter',
 		'karma-sourcemap-loader',
 		'karma-webpack'
-	];
+	].concat(
+		options.coverage ? 'karma-coverage' : []
+	);
 
 	const WEBPACK_CONFIGS = [
 		'webpack.config.babel.js',
@@ -109,7 +111,9 @@ export default function configure(options) {
 		basePath: cwd,
 		plugins: PLUGINS.map(require.resolve),
 		frameworks: ['jasmine'],
-		reporters: ['spec'],
+		reporters: ['spec'].concat(
+			options.coverage ? 'coverage' : []
+		),
 		browsers: [options.headless===false ? 'KarmaticChrome' : 'KarmaticChromeHeadless'],
 
 		customLaunchers: {
@@ -120,6 +124,14 @@ export default function configure(options) {
 				base: 'ChromeHeadless',
 				flags: ['--no-sandbox']
 			}
+		},
+
+		coverageReporter: {
+			reporters: [
+				{ type: 'text-summary' },
+				{ type: 'html' },
+				{ type: 'lcovonly', subdir: '.', file: 'lcov.info' }
+			]
 		},
 
 		formatError(msg) {

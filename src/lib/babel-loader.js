@@ -17,7 +17,9 @@ export default function babelLoader(options) {
 			plugins: [
 				[require.resolve('babel-plugin-transform-object-rest-spread')],
 				[require.resolve('babel-plugin-transform-react-jsx'), { pragma: options.pragma || 'h' }]
-			]
+			].concat(
+				options.coverage ? require.resolve('babel-plugin-istanbul') : []
+			)
 		}
 	};
 }
