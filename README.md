@@ -15,7 +15,7 @@ Most importantly, Karmatic provides a (headless) browser test harness in a singl
 ## Installation
 
 ```sh
-npm i -D karmatic
+npm i -D webpack karmatic
 ```
 
 ... then add a `test` script to your `package.json`:
