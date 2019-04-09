@@ -2,23 +2,33 @@ export default function babelLoader(options) {
 	return {
 		test: /\.jsx?$/,
 		exclude: /node_modules/,
-		loader: 'babel-loader',
+		loader: require.resolve('babel-loader'),
 		query: {
 			presets: [
-				[require.resolve('babel-preset-env'), {
+				[require.resolve('@babel/preset-env'), {
 					targets: {
-						browsers: 'last 2 Chrome versions'
+						browsers: [
+							'last 2 Chrome versions',
+							'last 2 Firefox versions',
+							options.browsers && String(options.browsers).match(/(\bie(\b|\d)|internet.explorer)/gi) && 'ie>=9'
+						].filter(Boolean)
 					},
+					corejs: 2,
+					useBuiltIns: 'usage',
 					modules: false,
 					loose: true
-				}],
-				require.resolve('babel-preset-stage-0')
+				}]
 			],
 			plugins: [
-				[require.resolve('babel-plugin-transform-object-rest-spread')],
-				[require.resolve('babel-plugin-transform-react-jsx'), { pragma: options.pragma || 'h' }]
+				[require.resolve('@babel/plugin-proposal-object-rest-spread'), {
+					loose: true,
+					useBuiltIns: true
+				}],
+				[require.resolve('@babel/plugin-transform-react-jsx'), {
+					pragma: options.pragma || 'h'
+				}]
 			].concat(
-				options.coverage ? require.resolve('babel-plugin-istanbul') : []
+				options.coverage ? [require.resolve('babel-plugin-istanbul')] : []
 			)
 		}
 	};
