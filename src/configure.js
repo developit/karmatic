@@ -17,6 +17,7 @@ const WEBPACK_MAJOR = parseInt(WEBPACK_VERSION.split('.')[0], 10);
  * @param {Boolean} [options.watch=false] - Start a continuous test server and retest when files change
  * @param {Boolean} [options.coverage=false] - Instrument and collect code coverage statistics
  * @param {Object} [options.webpackConfig] - Custom webpack configuration
+ * @param {Boolean} [options.downlevel=false] - Downlevel/transpile syntax to ES5
  */
 export default function configure(options) {
 	let cwd = process.cwd(),
@@ -235,6 +236,7 @@ export default function configure(options) {
 
 		webpack: {
 			devtool: 'cheap-module-eval-source-map',
+			// devtool: 'module-source-map',
 			mode: webpackConfig.mode || 'development',
 			module: {
 				// @TODO check webpack version and use loaders VS rules as the key here appropriately:
