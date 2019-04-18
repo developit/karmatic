@@ -1,3 +1,5 @@
+import worker from 'workerize-loader!./fixture.worker.js';
+
 const sleep = ms => new Promise( r => setTimeout(r, ms) );
 
 describe('demo', () => {
@@ -18,9 +20,8 @@ describe('demo', () => {
 	});
 
 	it('should do MAGIC', async () => {
-		let lib = await import('workerize-loader!./fixture.worker.js');
-		expect(lib).toEqual(jasmine.any(Function));
-		let mod = lib();
+		let mod = worker();
+		expect(mod.foo).toEqual(jasmine.any(Function));
 		expect(await mod.foo()).toEqual(1);
 	});
 });

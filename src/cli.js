@@ -6,9 +6,10 @@ import './lib/patch';
 import karmatic from '.';
 import { cleanStack } from './lib/util';
 
+// @ts-ignore
 const { version } = require('../package.json');
 
-let toArray = val => Array.isArray(val) ? val : val == null ? [] : [val];
+let toArray = val => typeof val === 'string' ? val.split(/\s*,\s*/) : val == null ? [] : [].concat(val);
 
 let prog = sade('karmatic');
 
@@ -16,6 +17,8 @@ prog
 	.version(version)
 	.option('--files', 'Minimatch pattern for test files')
 	.option('--headless', 'Run using Chrome Headless', true)
+	.option('--coverage', 'Report code coverage of tests', true)
+	.option('--downlevel', 'Downlevel syntax to ES5')
 	.option('--chromeDataDir', 'Save Chrome preferences');
 
 prog
@@ -28,11 +31,21 @@ prog
 	.describe('Run tests on any change')
 	.action( (str, opts) => run(str, opts, true) );
 
+prog
+	.command('debug [...files]')
+	.describe('Open a headful Puppeteer instance for debugging your tests')
+	.option('--headless', 'Run using Chrome Headless', false) // Override default to false
+	.option('--browsers', 'Run in specific browsers', null)
+	.option('--coverage', 'Report code coverage of tests', false) // Override default to false
+	.action( (str, opts) => run(str, opts, true) );
+
 prog.parse(process.argv);
 
 function run(str, opts, isWatch) {
 	opts.watch = !!isWatch;
 	opts.files = toArray(str || opts.files).concat(opts._);
+	const b = opts.browsers || opts.browser;
+	opts.browsers = b ? toArray(b) : null;
 	karmatic(opts)
 		.then( output => {
 			if (output!=null) process.stdout.write(output + '\n');

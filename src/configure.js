@@ -1,10 +1,24 @@
 import path from 'path';
 import puppeteer from 'puppeteer';
+import chalk from 'chalk';
 import delve from 'dlv';
-import { moduleDir, tryRequire, dedupe, cleanStack, readFile, readDir } from './lib/util';
+import { tryRequire, dedupe, cleanStack, readFile, readDir } from './lib/util';
 import babelLoader from './lib/babel-loader';
 import cssLoader from './lib/css-loader';
 
+const WEBPACK_VERSION = String(require('webpack').version || '3.0.0');
+const WEBPACK_MAJOR = parseInt(WEBPACK_VERSION.split('.')[0], 10);
+
+/**
+ * @param {Object} options
+ * @param {Array} options.files - Test files to run
+ * @param {Array} [options.browsers] - Custom list of browsers to run in
+ * @param {Boolean} [options.headless=false] - Run in Headless Chrome?
+ * @param {Boolean} [options.watch=false] - Start a continuous test server and retest when files change
+ * @param {Boolean} [options.coverage=false] - Instrument and collect code coverage statistics
+ * @param {Object} [options.webpackConfig] - Custom webpack configuration
+ * @param {Boolean} [options.downlevel=false] - Downlevel/transpile syntax to ES5
+ */
 export default function configure(options) {
 	let cwd = process.cwd(),
 		res = file => path.resolve(cwd, file);
@@ -14,7 +28,9 @@ export default function configure(options) {
 
 	process.env.CHROME_BIN = puppeteer.executablePath();
 
-	let gitignore = (readFile(path.resolve(cwd, '.gitignore'), 'utf8') || '').replace(/(^\s*|\s*$|#.*$)/g, '').split('\n').filter(Boolean);
+	let gitignore = (
+		readFile(path.resolve(cwd, '.gitignore')) || ''
+	).replace(/(^\s*|\s*$|#.*$)/g, '').split('\n').filter(Boolean);
 	let repoRoot = (readDir(cwd) || []).filter( c => c[0]!=='.' && c!=='node_modules' && gitignore.indexOf(c)===-1 );
 	let rootFiles = '{' + repoRoot.join(',') + '}';
 
@@ -24,7 +40,59 @@ export default function configure(options) {
 		'karma-spec-reporter',
 		'karma-sourcemap-loader',
 		'karma-webpack'
-	];
+	].concat(
+		options.coverage ? 'karma-coverage' : []
+	);
+
+	// Custom launchers to be injected:
+	const launchers = {};
+	let useSauceLabs = false;
+
+	let browsers;
+	if (options.browsers) {
+		browsers = options.browsers.map(browser => {
+			if (/^chrome$/i.test(browser)) {
+				return 'Chrome';
+			}
+			if (/^firefox$/i.test(browser)) {
+				PLUGINS.push('karma-firefox-launcher');
+				return 'Firefox';
+			}
+			if (/^sauce-/.test(browser)) {
+				if (!useSauceLabs) {
+					useSauceLabs = true;
+					PLUGINS.push('karma-sauce-launcher');
+				}
+				const parts = browser.toLowerCase().split('-');
+				const name = parts.join('_');
+				launchers[name] = {
+					base: 'SauceLabs',
+					browserName: parts[1].replace(/^ie$/gi, 'Internet Explorer'),
+					version: parts[2] || undefined,
+					platform: parts[3] ? parts[3].replace(/^win(dows)?[ -]+/gi, 'Windows ').replace(/^(macos|mac ?os ?x|os ?x)[ -]+/gi, 'OS X ') : undefined
+				};
+				return name;
+			}
+			return browser;
+		});
+	}
+	else {
+		browsers = [options.headless===false ? 'KarmaticChrome' : 'KarmaticChromeHeadless'];
+	}
+
+	if (useSauceLabs) {
+		let missing = ['SAUCE_USERNAME', 'SAUCE_ACCESS_KEY'].filter(x => !process.env[x])[0];
+		if (missing) {
+			throw (
+				'\n' +
+				chalk.bold.bgRed.white('Error:') + ' Missing SauceLabs auth configuration.' +
+				'\n  ' + chalk.white(`A SauceLabs browser was requested, but no ${chalk.magentaBright(missing)} environment variable provided.`) +
+				'\n  ' + chalk.white('Try prepending it to your test command:') +
+				'  ' + chalk.greenBright(missing + '=... npm test') +
+				'\n'
+			);
+		}
+	}
 
 	const WEBPACK_CONFIGS = [
 		'webpack.config.babel.js',
@@ -53,6 +121,9 @@ export default function configure(options) {
 		}
 	}
 
+	if (typeof webpackConfig==='function') {
+		webpackConfig = webpackConfig({ karmatic: true }, { mode: 'development', karmatic: true });
+	}
 	webpackConfig = webpackConfig || {};
 
 	let loaders = [].concat(delve(webpackConfig, 'module.loaders') || [], delve(webpackConfig, 'module.rules') || []);
@@ -92,29 +163,44 @@ export default function configure(options) {
 	}
 
 	function webpackProp(name, value) {
-		let configured = delve(webpackConfig, 'resolve.alias');
+		let configured = delve(webpackConfig, name);
 		if (Array.isArray(value)) {
 			return value.concat(configured || []).filter(dedupe);
 		}
 		return Object.assign({}, configured || {}, value);
 	}
 
-	return {
+	let generatedConfig = {
 		basePath: cwd,
-		plugins: PLUGINS.map(require.resolve),
+		plugins: PLUGINS.map(req => require.resolve(req)),
 		frameworks: ['jasmine'],
-		reporters: ['spec'],
-		browsers: [options.headless===false ? 'KarmaticChrome' : 'KarmaticChromeHeadless'],
+		reporters: ['spec'].concat(
+			options.coverage ? 'coverage' : [],
+			useSauceLabs ? 'saucelabs' : []
+		),
+		browsers,
+		sauceLabs: {
+			testName: pkg && pkg.name || undefined
+		},
 
-		customLaunchers: {
+		customLaunchers: Object.assign({
 			KarmaticChrome: {
 				base: 'Chrome',
-				chromeDataDir: options.chromeDataDir ? path.resolve(cwd, options.chromeDataDir) : null
+				chromeDataDir: options.chromeDataDir ? path.resolve(cwd, options.chromeDataDir) : null,
+				flags: ['--no-sandbox']
 			},
 			KarmaticChromeHeadless: {
 				base: 'ChromeHeadless',
 				flags: ['--no-sandbox']
 			}
+		}, launchers),
+
+		coverageReporter: {
+			reporters: [
+				{ type: 'text-summary' },
+				{ type: 'html' },
+				{ type: 'lcovonly', subdir: '.', file: 'lcov.info' }
+			]
 		},
 
 		formatError(msg) {
@@ -132,7 +218,8 @@ export default function configure(options) {
 		}],
 
 		files: [
-			{ pattern: moduleDir('babel-polyfill')+'/dist/polyfill.js', watched: false, included: true, served: true }
+			// @TODO remove me
+			// { pattern: moduleDir('babel-polyfill')+'/dist/polyfill.js', watched: false, included: true, served: true }
 		].concat( ...files.map( pattern => {
 			// Expand '**/xx' patterns but exempt node_modules and gitignored directories
 			let matches = pattern.match(/^\*\*\/(.+)$/);
@@ -144,19 +231,24 @@ export default function configure(options) {
 		}) ),
 
 		preprocessors: {
-			[rootFiles+'/**/*']: ['webpack']
+			[rootFiles+'/**/*']: ['webpack'],
+			[rootFiles]: ['webpack']
 		},
 
 		webpack: {
 			devtool: 'cheap-module-eval-source-map',
+			// devtool: 'module-source-map',
+			mode: webpackConfig.mode || 'development',
 			module: {
-				loaders: loaders.concat(
+				// @TODO check webpack version and use loaders VS rules as the key here appropriately:
+				rules: loaders.concat(
 					!getLoader( rule => `${rule.use},${rule.loader}`.match(/\bbabel-loader\b/) ) && babelLoader(options),
 					!getLoader('foo.css') && cssLoader(options)
 				).filter(Boolean)
 			},
 			resolve: webpackProp('resolve', {
 				modules: webpackProp('resolve.modules', [
+					'node_modules',
 					path.resolve(__dirname, '../node_modules')
 				]),
 				alias: webpackProp('resolve.alias', {
@@ -177,7 +269,8 @@ export default function configure(options) {
 			plugins: (webpackConfig.plugins || []).filter( plugin => {
 				let name = plugin && plugin.constructor.name;
 				return /^\s*(UglifyJS|HTML|ExtractText|BabelMinify)(.*Webpack)?Plugin\s*$/gi.test(name);
-			})
+			}),
+			node: webpackProp('node', {})
 		},
 
 		webpackMiddleware: {
@@ -194,4 +287,13 @@ export default function configure(options) {
 			}
 		}
 	};
+
+	if (WEBPACK_MAJOR < 4) {
+		delete generatedConfig.webpack.mode;
+		let { rules } = generatedConfig.webpack.module;
+		delete generatedConfig.webpack.module.rules;
+		generatedConfig.webpack.module.loaders = rules;
+	}
+
+	return generatedConfig;
 }

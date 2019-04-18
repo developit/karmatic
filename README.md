@@ -15,7 +15,7 @@ Most importantly, Karmatic provides a (headless) browser test harness in a singl
 ## Installation
 
 ```sh
-npm i -D karmatic
+npm i -D webpack karmatic
 ```
 
 ... then add a `test` script to your `package.json`:
@@ -28,7 +28,7 @@ npm i -D karmatic
 }
 ```
 
-... now you can run your tests using `npm t`.
+... now you can run your tests using `npm t`. Here's a [minimal example repo](https://gist.github.com/developit/acd8a075350eeb6574439e92888c50cf).
 
 
 ### Test File Patterns
@@ -50,6 +50,34 @@ Example:
 ```
 karmatic --chromeDataDir .chrome
 ```
+
+## Usage
+
+```text
+Usage
+    $ karmatic <command> [options]
+
+Available Commands
+    run      Run tests once and exit
+    watch    Run tests on any change
+    debug    Open a headful Puppeteer instance for debugging your tests
+
+For more info, run any command with the `--help` flag
+    $ karmatic run --help
+    $ karmatic watch --help
+
+Options
+    -v, --version    Displays current version
+    --files          Minimatch pattern for test files
+    --headless       Run using Chrome Headless  (default true)
+    --coverage       Report code coverage of tests  (default true)
+    -h, --help       Displays this message
+```
+
+To disable any option that defaults to `true`, pass `false` to the option: `--headless false` or `--coverage false`.
+
+NOTE: The `debug` option overrides the default value of the `--headless` and `--coverage` option to be `false`. This option will also open up the local Puppeteer installation of Chrome, not your globally installed one. If you'd like to debug your tests using your your own instance of Chrome (or any other browser), copy the URL from the puppeteer window into your favorite browser.
+
 
 ## FAQ
 
