@@ -10,7 +10,7 @@ export default function babelLoader(options) {
 						browsers: [
 							'last 2 Chrome versions',
 							'last 2 Firefox versions',
-							(options.downlevel || options.browsers && String(options.browsers).match(/(\bie(\b|\d)|internet.explorer)/gi)) && 'ie>=9'
+							(options.downlevel || options.browsers && String(options.browsers).match(/(\b|ms|microsoft)(ie|internet.explorer|edge)/gi)) && 'ie>=9'
 						].filter(Boolean)
 					},
 					corejs: 2,

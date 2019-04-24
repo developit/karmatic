@@ -51,8 +51,8 @@ export default function configure(options) {
 	let browsers;
 	if (options.browsers) {
 		browsers = options.browsers.map(browser => {
-			if (/^chrome$/i.test(browser)) {
-				return 'Chrome';
+			if (/^chrome([ :-]?headless)?$/i.test(browser)) {
+				return `KarmaticChrome${/headless/i.test(browser)?'Headless':''}`;
 			}
 			if (/^firefox$/i.test(browser)) {
 				PLUGINS.push('karma-firefox-launcher');
@@ -67,7 +67,7 @@ export default function configure(options) {
 				const name = parts.join('_');
 				launchers[name] = {
 					base: 'SauceLabs',
-					browserName: parts[1].replace(/^ie$/gi, 'Internet Explorer'),
+					browserName: parts[1].replace(/^(msie|ie|internet ?explorer)$/i, 'Internet Explorer').replace(/^(ms|microsoft|)edge$/i, 'MicrosoftEdge'),
 					version: parts[2] || undefined,
 					platform: parts[3] ? parts[3].replace(/^win(dows)?[ -]+/gi, 'Windows ').replace(/^(macos|mac ?os ?x|os ?x)[ -]+/gi, 'OS X ') : undefined
 				};
