@@ -65,12 +65,31 @@ export default function configure(options) {
 				}
 				const parts = browser.toLowerCase().split('-');
 				const name = parts.join('_');
-				launchers[name] = {
+				const launcher = launchers[name] = {
 					base: 'SauceLabs',
 					browserName: parts[1].replace(/^(msie|ie|internet ?explorer)$/i, 'Internet Explorer').replace(/^(ms|microsoft|)edge$/i, 'MicrosoftEdge'),
 					version: parts[2] || undefined,
 					platform: parts[3] ? parts[3].replace(/^win(dows)?[ -]+/gi, 'Windows ').replace(/^(macos|mac ?os ?x|os ?x)[ -]+/gi, 'OS X ') : undefined
 				};
+				
+				if (launcher.browserName === 'safari') {
+					if (!launcher.platform) {
+						launcher.platform = 'macOS';
+					}
+					if (parseFloat(launcher.version)<11) {
+						launcher.platform += parts[4] || ' 10.11';
+					}
+				}
+				else if (parts[4]) {
+					launcher.platform += ' ' + parts[4];
+				}
+				const m = launcher.platform && launcher.platform.match(/macOS (\d+(?:\.\d+)?)/);
+				if (m && parseFloat(m[1])<10.12) {
+					launcher.platform = launcher.platform.replace(/^macOS /, 'OS X ');
+				}
+				const version = parseFloat(launcher.version);
+				if (version === version|0) launcher.version += '.0';
+
 				return name;
 			}
 			return browser;
