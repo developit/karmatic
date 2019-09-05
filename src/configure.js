@@ -5,6 +5,7 @@ import delve from 'dlv';
 import { tryRequire, dedupe, cleanStack, readFile, readDir } from './lib/util';
 import babelLoader from './lib/babel-loader';
 import cssLoader from './lib/css-loader';
+// import minimatch from 'minimatch';
 
 const WEBPACK_VERSION = String(require('webpack').version || '3.0.0');
 const WEBPACK_MAJOR = parseInt(WEBPACK_VERSION.split('.')[0], 10);
@@ -241,7 +242,15 @@ export default function configure(options) {
 			module: {
 				// @TODO check webpack version and use loaders VS rules as the key here appropriately:
 				rules: loaders.concat(
-					!getLoader( rule => `${rule.use},${rule.loader}`.match(/\bbabel-loader\b/) ) && babelLoader(options),
+					!getLoader( rule => `${rule.use},${rule.loader}`.match(/\bbabel-loader\b/) ) ? (
+						babelLoader(options)
+					) : false /*({
+						test: /\.[tj]sx?$/,
+						// include: files.map(f => minimatch.filter(f, { matchBase: true })),
+						exclude: /node_modules/,
+						enforce: 'pre',
+						loader: require.resolve('istanbul-instrumenter-loader')
+					})*/,
 					!getLoader('foo.css') && cssLoader(options)
 				).filter(Boolean)
 			},
@@ -269,11 +278,16 @@ export default function configure(options) {
 				let name = plugin && plugin.constructor.name;
 				return /^\s*(UglifyJS|HTML|ExtractText|BabelMinify)(.*Webpack)?Plugin\s*$/gi.test(name);
 			}),
-			node: webpackProp('node', {})
+			node: webpackProp('node', {}),
+			performance: {
+				hints: false
+			}
 		},
 
 		webpackMiddleware: {
-			noInfo: true
+			noInfo: true,
+			logLevel: 'error',
+			stats: 'errors-only'
 		},
 
 		colors: true,
