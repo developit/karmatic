@@ -218,8 +218,13 @@ export default function configure(options) {
 		}],
 
 		files: [
-			// @TODO remove me
-			// { pattern: moduleDir('babel-polyfill')+'/dist/polyfill.js', watched: false, included: true, served: true }
+			// Inject Jest matchers:
+			{
+				pattern: path.resolve(__dirname, '../node_modules/expect/build-es5/index.js'),
+				watched: false,
+				included: true,
+				served: true
+			}
 		].concat( ...files.map( pattern => {
 			// Expand '**/xx' patterns but exempt node_modules and gitignored directories
 			let matches = pattern.match(/^\*\*\/(.+)$/);
