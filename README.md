@@ -12,7 +12,6 @@ Karmatic is a zero-configuration wrapper around these tools with intelligent def
 
 Most importantly, Karmatic provides a (headless) browser test harness in a single dependency.
 
-
 ## Installation
 
 ```sh
@@ -31,7 +30,6 @@ npm i -D webpack karmatic
 
 ... now you can run your tests using `npm t`. Here's a [minimal example repo](https://gist.github.com/developit/acd8a075350eeb6574439e92888c50cf).
 
-
 ### Test File Patterns
 
 By default, Karmatic will find tests in any files ending in `.test.js` or `_test.js`.
@@ -40,7 +38,6 @@ You can change this to any minimatch pattern _(note the quotes to avoid shell ex
 ```sh
 karmatic '**/*Spec.jsx?'
 ```
-
 
 ## Usage
 
@@ -69,13 +66,11 @@ To disable any option that defaults to `true`, pass `false` to the option: `--he
 
 NOTE: The `debug` option overrides the default value of the `--headless` and `--coverage` option to be `false`. This option will also open up the local Puppeteer installation of Chrome, not your globally installed one. If you'd like to debug your tests using your your own instance of Chrome (or any other browser), copy the URL from the puppeteer window into your favorite browser.
 
-
 ## FAQ
 
-**Q**: [Is there an FAQ?](https://twitter.com/gauntface/status/956259291928776704)**
+**Q**: [Is there an FAQ?](https://twitter.com/gauntface/status/956259291928776704)\*\*
 
 > Yes.
-
 
 ## Projects Using Karmatic
 
@@ -83,13 +78,11 @@ Karmatic is pretty new! Here are some projects that have switched to it you may 
 
 - [workerize-loader](https://github.com/developit/workerize-loader/commit/afaa20bbfbdec1d6a5523ec69ba2a2d5d495cfd6)
 
-
 ## License
 
 [MIT](https://oss.ninja/mit/developit) © [developit](https://github.com/developit)
 
-
-[Karma]: https://karma-runner.github.io
-[Webpack]: https://webpack.js.org
-[Jasmine]: https://jasmine.github.io
-[Puppeteer]: https://github.com/GoogleChrome/puppeteer
+[karma]: https://karma-runner.github.io
+[webpack]: https://webpack.js.org
+[jasmine]: https://jasmine.github.io
+[puppeteer]: https://github.com/GoogleChrome/puppeteer
