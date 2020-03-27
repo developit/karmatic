@@ -1,6 +1,6 @@
 import worker from 'workerize-loader!./fixture.worker.js';
 
-const sleep = ms => new Promise( r => setTimeout(r, ms) );
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 describe('demo', () => {
 	it('should work', () => {
@@ -16,7 +16,7 @@ describe('demo', () => {
 		await sleep(100);
 
 		let now = Date.now();
-		expect(now-start).toBeGreaterThan(50);
+		expect(now - start).toBeGreaterThan(50);
 	});
 
 	it('should do MAGIC', async () => {
