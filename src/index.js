@@ -16,13 +16,13 @@ export default async function karmatic(options) {
 function createServer(config) {
 	let resolve, reject;
 
-	let promise = new Promise( (res, rej) => {
+	let promise = new Promise((res, rej) => {
 		resolve = res;
 		reject = rej;
 	});
 
-	let callback = code => {
-		if (code===0) return resolve();
+	let callback = (code) => {
+		if (code === 0) return resolve();
 		let err = Error(`Exit ${code}`);
 		err.code = code;
 		reject(err);
