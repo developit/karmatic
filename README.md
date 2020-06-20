@@ -46,6 +46,7 @@ karmatic '**/*Spec.jsx?'
 Filename to be used to save Chrome preferences between test runs. Useful for debugging tests. It is recommended to also add this filename to `.gitignore`.
 
 Example:
+
 ```
 karmatic --chromeDataDir .chrome
 ```

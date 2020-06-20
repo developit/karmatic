@@ -19,6 +19,7 @@ const WEBPACK_MAJOR = parseInt(WEBPACK_VERSION.split('.')[0], 10);
  * @param {Boolean} [options.coverage=false] - Instrument and collect code coverage statistics
  * @param {Object} [options.webpackConfig] - Custom webpack configuration
  * @param {Boolean} [options.downlevel=false] - Downlevel/transpile syntax to ES5
+ * @param {string} [options.chromeDataDir] - Use a custom Chrome profile directory
  */
 export default function configure(options) {
 	let cwd = process.cwd(),
@@ -193,7 +194,9 @@ export default function configure(options) {
 		return Object.assign({}, configured || {}, value);
 	}
 
-	const chromeDataDir = options.chromeDataDir ? path.resolve(cwd, options.chromeDataDir) : null;
+	const chromeDataDir = options.chromeDataDir
+		? path.resolve(cwd, options.chromeDataDir)
+		: null;
 
 	const flags = ['--no-sandbox'];
 
