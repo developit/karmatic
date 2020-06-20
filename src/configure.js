@@ -192,10 +192,10 @@ export default function configure(options) {
 		}
 		return Object.assign({}, configured || {}, value);
 	}
-  
-  const chromeDataDir = options.chromeDataDir ? path.resolve(cwd, options.chromeDataDir) : null;
 
-  const flags = ['--no-sandbox'];
+	const chromeDataDir = options.chromeDataDir ? path.resolve(cwd, options.chromeDataDir) : null;
+
+	const flags = ['--no-sandbox'];
 
 	let generatedConfig = {
 		basePath: cwd,
@@ -214,12 +214,12 @@ export default function configure(options) {
 			{
 				KarmaticChrome: {
 					base: 'Chrome',
-          chromeDataDir,
+					chromeDataDir,
 					flags,
 				},
 				KarmaticChromeHeadless: {
 					base: 'ChromeHeadless',
-          chromeDataDir,
+					chromeDataDir,
 					flags,
 				},
 			},
