@@ -6,7 +6,7 @@ describe('Custom JSX Pragma', () => {
 		let createElement = jasmine.createSpy('createElement');
 		let React = { createElement: jasmine.createSpy('React.createElement') };
 
-		(<div id="foo">hello</div>);
+		<div id="foo">hello</div>;
 
 		expect(h).not.toHaveBeenCalled();
 		expect(React.createElement).not.toHaveBeenCalled();

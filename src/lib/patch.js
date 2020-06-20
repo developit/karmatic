@@ -1,11 +1,14 @@
 import chalk from 'chalk';
 
 let { write } = process.stdout;
-process.stdout.write = msg => {
+process.stdout.write = (msg) => {
 	// Strip + prettify console forwarded output:
 	let matches = msg.match(/^LOG ([A-Z]+): ([\s\S]*)$/);
 	if (matches) {
-		msg = chalk.bgBlueBright.white(' '+matches[1]+': ') + ' ' + chalk.blue(matches[2]);
+		msg =
+			chalk.bgBlueBright.white(' ' + matches[1] + ': ') +
+			' ' +
+			chalk.blue(matches[2]);
 	}
 
 	// Strip browser prefix from the output since there's only one:
