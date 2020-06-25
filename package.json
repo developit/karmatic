@@ -64,7 +64,7 @@
 		"karma-spec-reporter": "0.0.32",
 		"karma-webpack": "^4.0.2",
 		"minimatch": "^3.0.4",
-		"puppeteer": "^1.19.0",
+		"puppeteer": "^4.0.1",
 		"sade": "^1.7.3",
 		"script-loader": "^0.7.2"
 	},
