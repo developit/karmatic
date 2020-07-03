@@ -204,7 +204,7 @@ export default function configure(options) {
 		basePath: cwd,
 		plugins: PLUGINS.map((req) => require.resolve(req)),
 		frameworks: ['jasmine'],
-		reporters: ['spec'].concat(
+		reporters: [options.watch ? 'min' : 'spec'].concat(
 			options.coverage ? 'coverage' : [],
 			useSauceLabs ? 'saucelabs' : []
 		),
