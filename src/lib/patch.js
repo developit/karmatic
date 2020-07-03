@@ -3,7 +3,13 @@ import chalk from 'chalk';
 let { write } = process.stdout;
 process.stdout.write = (msg) => {
 	// Strip + prettify console forwarded output:
-	let matches = msg.match(/^LOG ([A-Z]+): ([\s\S]*)$/);
+	let matches = msg.match(/^LOG\s*([A-Z]+): ([\s\S]*)$/);
+
+	// "min" reporter has slightly different output
+	if (!matches) {
+		matches = msg.match(/^(LOG): ([\s\S]*)$/);
+	}
+
 	if (matches) {
 		msg =
 			chalk.bgBlueBright.white(' ' + matches[1] + ': ') +
