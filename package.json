@@ -35,6 +35,7 @@
 		"eslint": "^7.3.0",
 		"eslint-config-developit": "^1.2.0",
 		"eslint-config-prettier": "^6.11.0",
+		"karma-min-reporter": "^0.1.0",
 		"microbundle": "^0.12.2",
 		"prettier": "^1.19.1",
 		"webpack": "^4.43.0",
