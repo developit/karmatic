@@ -44,7 +44,7 @@ export function cleanStack(str, cwd = process.cwd()) {
 
 	let clean = str.replace(
 		new RegExp(
-			`( |\\()(https?:\\/\\/localhost:\\d+\\/base\\/|${cwd.replace(
+			`( |\\()(https?:\\/\\/localhost:\\d+\\/base\\/|webpack:///|${cwd.replace(
 				/([\\/[\]()*+$!^.,?])/g,
 				'\\$1'
 			)}\\/*)?([^\\s():?]*?)(?:\\?[a-zA-Z0-9]+?)?(:\\d+(?::\\d+)?)`,
