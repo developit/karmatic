@@ -29,6 +29,7 @@ prog
 prog
 	.command('run [...files]', '', { default: true })
 	.describe('Run tests once and exit')
+	.option('--watch', 'Enable watch mode (alias: karmatic watch)', false)
 	.action(run);
 
 prog
@@ -47,7 +48,7 @@ prog
 prog.parse(process.argv);
 
 function run(str, opts, isWatch) {
-	opts.watch = !!isWatch;
+	opts.watch = opts.watch === true || isWatch === true;
 	opts.files = toArray(str || opts.files).concat(opts._);
 	const b = opts.browsers || opts.browser;
 	opts.browsers = b ? toArray(b) : null;
