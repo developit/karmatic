@@ -43,6 +43,7 @@ export default function configure(options) {
 		'karma-chrome-launcher',
 		'karma-jasmine',
 		'karma-spec-reporter',
+		'karma-min-reporter',
 		'karma-sourcemap-loader',
 		'karma-webpack',
 	].concat(options.coverage ? 'karma-coverage' : []);
