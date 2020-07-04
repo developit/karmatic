@@ -47,6 +47,12 @@ export default function configure(options) {
 		'karma-webpack',
 	].concat(options.coverage ? 'karma-coverage' : []);
 
+	const preprocessors = [
+		'webpack',
+		'sourcemap',
+		options.coverage && 'coverage',
+	].filter(Boolean);
+
 	// Custom launchers to be injected:
 	const launchers = {};
 	let useSauceLabs = false;
@@ -282,8 +288,8 @@ export default function configure(options) {
 		),
 
 		preprocessors: {
-			[rootFiles + '/**/*']: ['webpack', 'sourcemap'],
-			[rootFiles]: ['webpack', 'sourcemap'],
+			[rootFiles + '/**/*']: preprocessors,
+			[rootFiles]: preprocessors,
 		},
 
 		webpack: {
