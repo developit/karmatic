@@ -2,7 +2,7 @@
 
 A simplified zero-configuration wrapper around [Karma], [Webpack], [Jasmine] & [Puppeteer].
 
-Think of it like Jest for cross-browser testing (it uses the same [expect syntax](https://jestjs.io/docs/en/using-matchers)).
+Think of it like **Jest for cross-browser testing** - it even uses the same [expect syntax](https://jestjs.io/docs/en/using-matchers).
 
 ## Why do I want this?
 
