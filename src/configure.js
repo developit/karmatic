@@ -270,6 +270,12 @@ export default function configure(options) {
 				included: true,
 				served: true,
 			},
+			{
+				pattern: path.resolve(__dirname, './lib/jest-globals.js'),
+				watched: false,
+				included: true,
+				served: true,
+			},
 		].concat(
 			...files.map((pattern) => {
 				// Expand '**/xx' patterns but exempt node_modules and gitignored directories
