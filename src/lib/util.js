@@ -107,7 +107,11 @@ export function cleanStack(str, cwd = process.cwd()) {
 	stack = frames
 		.map((frame) => {
 			// Only show frame for errors in the user's code
-			if (!nearestFrame && !/node_modules/.test(frame.fileName)) {
+			if (
+				!nearestFrame &&
+				!/node_modules/.test(frame.fileName) &&
+				frame.type !== 'native'
+			) {
 				nearestFrame = frame;
 			}
 
