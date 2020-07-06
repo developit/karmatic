@@ -107,7 +107,11 @@ export function cleanStack(str, cwd = process.cwd()) {
 	stack = frames
 		.map((frame) => {
 			// Only show frame for errors in the user's code
-			if (!nearestFrame && !/node_modules/.test(frame.fileName)) {
+			if (
+				!nearestFrame &&
+				!/node_modules/.test(frame.fileName) &&
+				frame.type !== 'native'
+			) {
 				nearestFrame = frame;
 			}
 
@@ -142,7 +146,7 @@ export function cleanStack(str, cwd = process.cwd()) {
 			const { fileName, line, column } = nearestFrame;
 			if (fileName) {
 				const content = fs.readFileSync(fileName, 'utf-8');
-				codeFrame = createCodeFrame(content, line, column - 1, {
+				codeFrame = createCodeFrame(content, line - 1, column - 1, {
 					before: 2,
 					after: 2,
 				});
