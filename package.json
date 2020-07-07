@@ -72,7 +72,7 @@
 		"simple-code-frame": "^1.0.0"
 	},
 	"peerDependencies": {
-		"puppeteer": "^4.0.1",
+		"puppeteer": "*",
 		"webpack": ">=4"
 	}
 }
