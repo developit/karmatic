@@ -105,6 +105,7 @@ export function cleanStack(str, cwd = process.cwd()) {
 	let nearestFrame;
 
 	stack = frames
+		.filter((frame) => frame.type !== 'native' || frame.name !== 'Jasmine')
 		.map((frame) => {
 			// Only show frame for errors in the user's code
 			if (
