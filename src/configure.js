@@ -1,25 +1,22 @@
 import path from 'path';
 import puppeteer from 'puppeteer';
 import chalk from 'chalk';
-import delve from 'dlv';
-import { tryRequire, dedupe, cleanStack, readFile, readDir } from './lib/util';
-import babelLoader from './lib/babel-loader';
-import cssLoader from './lib/css-loader';
+import { tryRequire, cleanStack, readFile, readDir } from './lib/util';
+import { shouldUseWebpack, addWebpackConfig } from './webpack';
 // import minimatch from 'minimatch';
 
-const WEBPACK_VERSION = String(require('webpack').version || '3.0.0');
-const WEBPACK_MAJOR = parseInt(WEBPACK_VERSION.split('.')[0], 10);
-
 /**
- * @param {Object} options
- * @param {Array} options.files - Test files to run
- * @param {Array} [options.browsers] - Custom list of browsers to run in
- * @param {Boolean} [options.headless=false] - Run in Headless Chrome?
- * @param {Boolean} [options.watch=false] - Start a continuous test server and retest when files change
- * @param {Boolean} [options.coverage=false] - Instrument and collect code coverage statistics
- * @param {Object} [options.webpackConfig] - Custom webpack configuration
- * @param {Boolean} [options.downlevel=false] - Downlevel/transpile syntax to ES5
- * @param {string} [options.chromeDataDir] - Use a custom Chrome profile directory
+ * @typedef Options
+ * @property {Array} files - Test files to run
+ * @property {Array} [browsers] - Custom list of browsers to run in
+ * @property {Boolean} [headless=false] - Run in Headless Chrome?
+ * @property {Boolean} [watch=false] - Start a continuous test server and retest when files change
+ * @property {Boolean} [coverage=false] - Instrument and collect code coverage statistics
+ * @property {Object} [webpackConfig] - Custom webpack configuration
+ * @property {Boolean} [downlevel=false] - Downlevel/transpile syntax to ES5
+ * @property {string} [chromeDataDir] - Use a custom Chrome profile directory
+ *
+ * @param {Options} options
  */
 export default function configure(options) {
 	let cwd = process.cwd(),
@@ -45,10 +42,9 @@ export default function configure(options) {
 		'karma-spec-reporter',
 		'karma-min-reporter',
 		'karma-sourcemap-loader',
-		'karma-webpack',
 	].concat(options.coverage ? 'karma-coverage' : []);
 
-	const preprocessors = ['webpack', 'sourcemap'];
+	const preprocessors = ['sourcemap'];
 
 	// Custom launchers to be injected:
 	const launchers = {};
@@ -115,87 +111,7 @@ export default function configure(options) {
 		}
 	}
 
-	const WEBPACK_CONFIGS = ['webpack.config.babel.js', 'webpack.config.js'];
-
-	let webpackConfig = options.webpackConfig;
-
 	let pkg = tryRequire(res('package.json'));
-
-	if (pkg.scripts) {
-		for (let i in pkg.scripts) {
-			let script = pkg.scripts[i];
-			if (/\bwebpack\b[^&|]*(-c|--config)\b/.test(script)) {
-				let matches = script.match(
-					/(?:-c|--config)\s+(?:([^\s])|(["'])(.*?)\2)/
-				);
-				let configFile = matches && (matches[1] || matches[2]);
-				if (configFile) WEBPACK_CONFIGS.push(configFile);
-			}
-		}
-	}
-
-	if (!webpackConfig) {
-		for (let i = WEBPACK_CONFIGS.length; i--; ) {
-			webpackConfig = tryRequire(res(WEBPACK_CONFIGS[i]));
-			if (webpackConfig) break;
-		}
-	}
-
-	if (typeof webpackConfig === 'function') {
-		webpackConfig = webpackConfig(
-			{ karmatic: true },
-			{ mode: 'development', karmatic: true }
-		);
-	}
-	webpackConfig = webpackConfig || {};
-
-	let loaders = [].concat(
-		delve(webpackConfig, 'module.loaders') || [],
-		delve(webpackConfig, 'module.rules') || []
-	);
-
-	function evaluateCondition(condition, filename, expected) {
-		if (typeof condition === 'function') {
-			return condition(filename) == expected;
-		} else if (condition instanceof RegExp) {
-			return condition.test(filename) == expected;
-		}
-		if (Array.isArray(condition)) {
-			for (let i = 0; i < condition.length; i++) {
-				if (evaluateCondition(condition[i], filename)) return expected;
-			}
-		}
-		return !expected;
-	}
-
-	function getLoader(predicate) {
-		if (typeof predicate === 'string') {
-			let filename = predicate;
-			predicate = (loader) => {
-				let { test, include, exclude } = loader;
-				if (exclude && evaluateCondition(exclude, filename, false))
-					return false;
-				if (include && !evaluateCondition(include, filename, true))
-					return false;
-				if (test && evaluateCondition(test, filename, true)) return true;
-				return false;
-			};
-		}
-		for (let i = 0; i < loaders.length; i++) {
-			if (predicate(loaders[i])) {
-				return { index: i, loader: loaders[i] };
-			}
-		}
-		return false;
-	}
-
-	function webpackProp(name, value) {
-		let configured = delve(webpackConfig, name);
-		if (Array.isArray(value)) {
-			return value.concat(configured || []).filter(dedupe);
-		}
-		return Object.assign({}, configured || {}, value);
-	}
 
 	const chromeDataDir = options.chromeDataDir
 		? path.resolve(cwd, options.chromeDataDir)
@@ -289,61 +205,6 @@ export default function configure(options) {
 			[rootFiles]: preprocessors,
 		},
 
-		webpack: {
-			devtool: 'inline-source-map',
-			// devtool: 'module-source-map',
-			mode: webpackConfig.mode || 'development',
-			module: {
-				// @TODO check webpack version and use loaders VS rules as the key here appropriately:
-				rules: loaders
-					.concat(
-						!getLoader((rule) =>
-							`${rule.use},${rule.loader}`.match(/\bbabel-loader\b/)
-						)
-							? babelLoader(options)
-							: false,
-						!getLoader('foo.css') && cssLoader(options)
-					)
-					.filter(Boolean),
-			},
-			resolve: webpackProp('resolve', {
-				modules: webpackProp('resolve.modules', [
-					'node_modules',
-					path.resolve(__dirname, '../node_modules'),
-				]),
-				alias: webpackProp('resolve.alias', {
-					[pkg.name]: res('.'),
-					src: res('src'),
-				}),
-			}),
-			resolveLoader: webpackProp('resolveLoader', {
-				modules: webpackProp('resolveLoader.modules', [
-					'node_modules',
-					path.resolve(__dirname, '../node_modules'),
-				]),
-				alias: webpackProp('resolveLoader.alias', {
-					[pkg.name]: res('.'),
-					src: res('src'),
-				}),
-			}),
-			plugins: (webpackConfig.plugins || []).filter((plugin) => {
-				let name = plugin && plugin.constructor.name;
-				return /^\s*(UglifyJS|HTML|ExtractText|BabelMinify)(.*Webpack)?Plugin\s*$/gi.test(
-					name
-				);
-			}),
-			node: webpackProp('node', {}),
-			performance: {
-				hints: false,
-			},
-		},
-
-		webpackMiddleware: {
-			noInfo: true,
-			logLevel: 'error',
-			stats: 'errors-only',
-		},
-
 		colors: true,
 
 		client: {
@@ -355,11 +216,8 @@ export default function configure(options) {
 		},
 	};
 
-	if (WEBPACK_MAJOR < 4) {
-		delete generatedConfig.webpack.mode;
-		let { rules } = generatedConfig.webpack.module;
-		delete generatedConfig.webpack.module.rules;
-		generatedConfig.webpack.module.loaders = rules;
+	if (shouldUseWebpack(options)) {
+		addWebpackConfig(generatedConfig, pkg, options);
 	}
 
 	return generatedConfig;
