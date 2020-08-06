@@ -301,13 +301,7 @@ export default function configure(options) {
 							`${rule.use},${rule.loader}`.match(/\bbabel-loader\b/)
 						)
 							? babelLoader(options)
-							: false /*({
-						test: /\.[tj]sx?$/,
-						// include: files.map(f => minimatch.filter(f, { matchBase: true })),
-						exclude: /node_modules/,
-						enforce: 'pre',
-						loader: require.resolve('istanbul-instrumenter-loader')
-					})*/,
+							: false,
 						!getLoader('foo.css') && cssLoader(options)
 					)
 					.filter(Boolean),
