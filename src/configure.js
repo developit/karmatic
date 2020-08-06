@@ -48,11 +48,7 @@ export default function configure(options) {
 		'karma-webpack',
 	].concat(options.coverage ? 'karma-coverage' : []);
 
-	const preprocessors = [
-		'webpack',
-		'sourcemap',
-		options.coverage && 'coverage',
-	].filter(Boolean);
+	const preprocessors = ['webpack', 'sourcemap'];
 
 	// Custom launchers to be injected:
 	const launchers = {};
