@@ -4,6 +4,9 @@ import chalk from 'chalk';
 import { createCodeFrame } from 'simple-code-frame';
 import { parseStackTrace } from 'errorstacks';
 
+const cwd = process.cwd();
+export const res = (file) => path.resolve(cwd, file);
+
 export function moduleDir(name) {
 	let file = require.resolve(name),
 		find = `${path.sep}node_modules${path.sep}${name}`,

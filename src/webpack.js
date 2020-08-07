@@ -1,7 +1,7 @@
 import path from 'path';
 import delve from 'dlv';
-import { tryRequire, dedupe } from './lib/util';
-import babelLoader from './lib/babel';
+import { res, tryRequire, dedupe } from './lib/util';
+import { babelLoader } from './lib/babel';
 import cssLoader from './lib/css-loader';
 
 /**
@@ -9,7 +9,14 @@ import cssLoader from './lib/css-loader';
  * @returns {boolean}
  */
 export function shouldUseWebpack(options) {
-	return true;
+	let shouldUse = true;
+	try {
+		require('webpack');
+	} catch (error) {
+		shouldUse = false;
+	}
+
+	return shouldUse;
 }
 
 /**
@@ -22,9 +29,6 @@ export function addWebpackConfig(karmaConfig, pkg, options) {
 	const WEBPACK_MAJOR = parseInt(WEBPACK_VERSION.split('.')[0], 10);
 
 	const WEBPACK_CONFIGS = ['webpack.config.babel.js', 'webpack.config.js'];
-
-	let cwd = process.cwd(),
-		res = (file) => path.resolve(cwd, file);
 
 	let webpackConfig = options.webpackConfig;
 

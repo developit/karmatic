@@ -3,6 +3,7 @@ import puppeteer from 'puppeteer';
 import chalk from 'chalk';
 import { tryRequire, cleanStack, readFile, readDir } from './lib/util';
 import { shouldUseWebpack, addWebpackConfig } from './webpack';
+import { shouldUseRollup, addRollupConfig } from './rollup';
 // import minimatch from 'minimatch';
 
 /**
@@ -13,6 +14,8 @@ import { shouldUseWebpack, addWebpackConfig } from './webpack';
  * @property {Boolean} [watch=false] - Start a continuous test server and retest when files change
  * @property {Boolean} [coverage=false] - Instrument and collect code coverage statistics
  * @property {Object} [webpackConfig] - Custom webpack configuration
+ * @property {Object} [rollupConfig] - Custom rollup configuration
+ * @property {string} [pragma] - JSX pragma to compile JSX with
  * @property {Boolean} [downlevel=false] - Downlevel/transpile syntax to ES5
  * @property {string} [chromeDataDir] - Use a custom Chrome profile directory
  *
@@ -218,6 +221,16 @@ export default function configure(options) {
 
 	if (shouldUseWebpack(options)) {
 		addWebpackConfig(generatedConfig, pkg, options);
+	} else if (shouldUseRollup(options)) {
+		addRollupConfig(generatedConfig, pkg, options);
+	} else {
+		console.error(
+			chalk.red(
+				`Could not load "webpack" or "rollup". Install one of them and we're good to go :)`
+			)
+		);
+
+		process.exit(1);
 	}
 
 	return generatedConfig;
