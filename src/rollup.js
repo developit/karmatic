@@ -3,27 +3,12 @@ import babel from '@rollup/plugin-babel';
 import { babelConfig } from './lib/babel';
 import { res, tryRequire } from './lib/util';
 
-function tryLoadPlugin(name) {
-	try {
-		const plugin = require(name);
-
-		// @rollup/plugin-commonjs exports the plugin function directly, while
-		// @rollup/plugin-node-resolve exports an object with a default prop...
-		if (plugin && typeof plugin == 'object' && 'default' in plugin) {
-			return plugin.default;
-		}
-
-		return plugin;
-	} catch (e) {}
-}
-
 /**
- * @param {Object} pkg
  * @param {import('./configure').Options} options
  */
-function getDefaultConfig(pkg, options) {
-	let commonjs = tryLoadPlugin('@rollup/plugin-commonjs');
-	let nodeResolve = tryLoadPlugin('@rollup/plugin-node-resolve');
+function getDefaultConfig(options) {
+	let commonjs = require('@rollup/plugin-commonjs');
+	let nodeResolve = require('@rollup/plugin-node-resolve').default;
 
 	return {
 		output: {
@@ -32,8 +17,8 @@ function getDefaultConfig(pkg, options) {
 			sourcemap: 'inline',
 		},
 		plugins: [
-			commonjs && commonjs(),
-			nodeResolve && nodeResolve(),
+			commonjs(),
+			nodeResolve(),
 			babel({
 				babelHelpers: 'bundled',
 				...babelConfig(options),
@@ -86,7 +71,7 @@ function getRollupConfig(pkg, options) {
 		);
 	}
 
-	return rollupConfig || getDefaultConfig(pkg, options);
+	return rollupConfig || getDefaultConfig(options);
 }
 
 /**
