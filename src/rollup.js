@@ -28,13 +28,16 @@ function getDefaultConfig(pkg, options) {
 	return {
 		output: {
 			format: 'iife',
-			name: `${pkg.name}-karmatic-tests`,
+			name: `KarmaticTests`,
 			sourcemap: 'inline',
 		},
 		plugins: [
 			commonjs && commonjs(),
 			nodeResolve && nodeResolve(),
-			babel(babelConfig(options)),
+			babel({
+				babelHelpers: 'bundled',
+				...babelConfig(options),
+			}),
 		].filter(Boolean),
 	};
 }
@@ -74,7 +77,7 @@ function getRollupConfig(pkg, options) {
 
 	if (Array.isArray(rollupConfig)) {
 		rollupConfig = rollupConfig[0];
-	} else if (rollupConfig.then) {
+	} else if (rollupConfig && rollupConfig.then) {
 		rollupConfig = null;
 		console.warn(
 			chalk.yellow(
