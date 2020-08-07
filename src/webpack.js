@@ -1,7 +1,7 @@
 import path from 'path';
 import delve from 'dlv';
 import { tryRequire, dedupe } from './lib/util';
-import babelLoader from './lib/babel-loader';
+import babelLoader from './lib/babel';
 import cssLoader from './lib/css-loader';
 
 /**
