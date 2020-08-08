@@ -10,8 +10,9 @@
 		"build": "microbundle --target node -f cjs --no-compress src/index.js src/cli.js src/appender.js",
 		"test:build": "node ./dist/cli.js run",
 		"test:watch": "node ./dist/cli.js watch --headless false",
-		"prettier": "prettier --write './**/*.{js,json,yml,md}'",
-		"test": "prettier --check \"./**/*.{js,json,yml,md}\" && eslint src test && npm run -s build && npm run -s test:build",
+		"test:e2e": "node ./scripts/run-e2e-tests.mjs",
+		"prettier": "prettier --write './**/*.{js,mjs,json,yml,md}'",
+		"test": "prettier --check \"./**/*.{js,mjs,json,yml,md}\" && eslint src test e2e-test && npm run -s build && npm run -s test:build && npm run -s test:e2e",
 		"release": "npm run -s prepare && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
 	},
 	"eslintConfig": {

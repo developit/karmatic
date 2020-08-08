@@ -1,0 +1,8 @@
+{
+	"name": "karmatic-e2e-default-rollup",
+	"description": "Test default rollup config in karmatic. Mildly complex src implementation to verify coverage works",
+	"private": true,
+	"dependencies": {
+		"rollup": "^2.23.1"
+	}
+}

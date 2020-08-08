@@ -5,7 +5,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import chalk from 'chalk';
-import { pool } from '@kristoferbaxter/async';
+// import { pool } from '@kristoferbaxter/async';
 
 const IS_CI = process.env.CI === 'true';
 
