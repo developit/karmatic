@@ -143,10 +143,13 @@ async function npmInstall(cwd, prefix) {
 }
 
 async function runTests(projectPath, prefix) {
+	const log = (...msgs) => console.log(`${info(prefix)}`, ...msgs);
+
+	log(`Beginning E2E test at`, projectPath);
 	const pkgJsonPath = path.join(projectPath, 'package.json');
 	const pkg = JSON.parse(await fs.readFile(pkgJsonPath, 'utf8'));
 
-	console.log(`${info(prefix)} Updating package.json with karmatic path...`);
+	log(`Updating package.json with karmatic path...`);
 	pkg.dependencies['karmatic'] = pathToFileURL(repoRoot());
 	const newContents = JSON.stringify(pkg, null, 2);
 	await fs.writeFile(pkgJsonPath, newContents, 'utf8');
@@ -158,11 +161,11 @@ async function runTests(projectPath, prefix) {
 	if (pkg.scripts && pkg.scripts.test) {
 		cmd = npmCmd;
 		args = ['test'];
-		console.log(`${info(prefix)} Running npm test...`);
+		log(`Running npm test...`);
 	} else {
 		cmd = process.execPath;
 		args = ['node_modules/karmatic/dist/cli.js', 'run'];
-		console.log(`${info(prefix)} Running karmatic...`);
+		log(`Running karmatic...`);
 	}
 
 	const cp = execFile(cmd, args, opts);
