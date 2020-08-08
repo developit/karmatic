@@ -1,0 +1,7 @@
+{
+	"name": "karmatic-e2e-default-webpack",
+	"private": true,
+	"dependencies": {
+		"webpack": "^4.44.1"
+	}
+}

@@ -32,6 +32,7 @@
 	"repository": "developit/karmatic",
 	"license": "MIT",
 	"devDependencies": {
+		"@kristoferbaxter/async": "^1.0.0",
 		"eslint": "^7.3.0",
 		"eslint-config-developit": "^1.2.0",
 		"eslint-config-prettier": "^6.11.0",

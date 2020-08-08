@@ -1,4 +1,4 @@
-import { combine } from '../src/index';
+import { combine } from './index';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
