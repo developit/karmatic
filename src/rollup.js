@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-import babel from '@rollup/plugin-babel';
 import { babelConfig } from './lib/babel';
 import { res, tryRequire } from './lib/util';
 
@@ -7,6 +6,7 @@ import { res, tryRequire } from './lib/util';
  * @param {import('./configure').Options} options
  */
 function getDefaultConfig(options) {
+	let babel = require('@rollup/plugin-babel').default;
 	let commonjs = require('@rollup/plugin-commonjs');
 	let nodeResolve = require('@rollup/plugin-node-resolve').default;
 
@@ -113,6 +113,5 @@ export function addRollupConfig(karmaConfig, pkg, options) {
 
 	karmaConfig.plugins.push(require.resolve('karma-rollup-preprocessor'));
 
-	// TODO: Add default rollup config
 	karmaConfig.rollupPreprocessor = getRollupConfig(pkg, options);
 }
