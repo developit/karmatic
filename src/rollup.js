@@ -51,6 +51,7 @@ function getRollupConfig(pkg, options) {
 
 	if (!rollupConfig) {
 		for (let i = ROLLUP_CONFIGS.length; i--; ) {
+			// TODO: Breaks if rollup.config.js uses ES Modules... :(
 			rollupConfig = tryRequire(res(ROLLUP_CONFIGS[i]));
 			if (rollupConfig) break;
 		}
