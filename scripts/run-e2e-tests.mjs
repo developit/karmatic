@@ -24,6 +24,13 @@ const npmCmd = isWindows ? 'npm.cmd' : 'npm';
 const info = chalk.blue;
 const error = chalk.red;
 
+async function fileExists(file) {
+	try {
+		return (await fs.stat(file)).isFile();
+	} catch (e) {}
+	return false;
+}
+
 /**
  * @param {import('child_process').ChildProcess} childProcess
  * @param {(code: number, signal: string) => boolean} [isSuccess]
@@ -133,7 +140,7 @@ async function npmInstall(cwd, prefix) {
 	const args = [IS_CI ? 'ci' : 'install', '--no-fund'];
 	const options = { cwd, encoding: 'utf8' };
 
-	console.log(`${info(prefix)} Installing packages for ${name}...`);
+	console.log(`${info(prefix)} Installing packages for "${name}"...`);
 
 	const cp = execFile(npmCmd, args, options, noop);
 	cp.stdout.pipe(createPrefixTransform(info(prefix))).pipe(process.stdout);
@@ -143,10 +150,20 @@ async function npmInstall(cwd, prefix) {
 }
 
 async function runTests(projectPath, prefix) {
+	const name = path.basename(projectPath);
 	const log = (...msgs) => console.log(`${info(prefix)}`, ...msgs);
 
 	log(`Beginning E2E test at`, projectPath);
 	const pkgJsonPath = path.join(projectPath, 'package.json');
+	if (!(await fileExists(pkgJsonPath))) {
+		prefix = error(prefix);
+		console.error(
+			`${prefix} Could not locate package.json for "${name}". Ensure every e2e test has a package.json defined.`
+		);
+		console.error(`${prefix} Expected to find one at "${pkgJsonPath}".`);
+		throw new Error(`Could not locate package.json for "${name}".`);
+	}
+
 	const pkg = JSON.parse(await fs.readFile(pkgJsonPath, 'utf8'));
 
 	log(`Updating package.json with karmatic path...`);
@@ -168,14 +185,15 @@ async function runTests(projectPath, prefix) {
 		log(`Running karmatic...`);
 	}
 
+	// TODO: Need to use --preserve-sym-links and --preserve-sym-links-main (or the env variables) to make symlinked karmatic require work
 	const cp = execFile(cmd, args, opts);
 	cp.stdout.pipe(createPrefixTransform(info(prefix))).pipe(process.stdout);
 	cp.stderr.pipe(createPrefixTransform(error(prefix))).pipe(process.stderr);
 
 	try {
 		await onExit(cp);
-	} catch (error) {
-		console.error(error(prefix) + ` Test run failed: ${error.message}`);
+	} catch (e) {
+		console.error(error(prefix) + ` Test run failed: ${e.message}`);
 	}
 }
 
