@@ -1,0 +1,9 @@
+{
+	"name": "karmatic-e2e-webpack-workerize-loader",
+	"description": "Test customer webpack loader testing in karmatic",
+	"private": true,
+	"dependencies": {
+		"webpack": "^4.44.1",
+		"workerize-loader": "^1.3.0"
+	}
+}
