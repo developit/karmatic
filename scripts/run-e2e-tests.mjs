@@ -1,22 +1,18 @@
 import { execFile } from 'child_process';
-import { tmpdir } from 'os';
 import { Transform } from 'stream';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { fileURLToPath, pathToFileURL } from 'url';
+import { fileURLToPath } from 'url';
 import chalk from 'chalk';
 import micromatch from 'micromatch';
-// import { pool } from '@kristoferbaxter/async';
+import { pool } from '@kristoferbaxter/async';
 
 const IS_CI = process.env.CI === 'true';
 
 // @ts-ignore
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = (...args) => path.join(__dirname, '..', ...args);
-const tmpDir = tmpdir();
-const e2eSrcDir = (...args) => repoRoot('e2e-test', ...args);
-const e2eDestDir = (...args) =>
-	path.join(tmpDir, 'karmatic', 'e2e-test', ...args);
+const e2eRoot = (...args) => repoRoot('e2e-test', ...args);
 
 const noop = () => {};
 const isWindows = process.platform === 'win32';
@@ -54,35 +50,6 @@ async function onExit(childProcess, isSuccess) {
 			reject(err);
 		});
 	});
-}
-
-async function copyDir(srcDir, destDir) {
-	const opts = { cwd: repoRoot() };
-	if (isWindows) {
-		// https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/robocopy
-		// https://stackoverflow.com/questions/24121046/difference-between-xcopy-and-robocopy
-		const robocopyArgs = [
-			'/s', // Subdirectories - copy recursively, excludes empty directories
-			'/np', // No progress - don't show progress of copying files
-			'/nfl', // No file logging
-			'/ndl', // No directory logging
-			'/is', // Includes same files: identical files will be overwritten
-			'/it', // Include 'tweaked' files: files with the same name in source and destination are overwritten
-			'/MT', // Multi-threaded copying
-			srcDir,
-			destDir,
-		];
-
-		let cp = execFile('robocopy', robocopyArgs, opts, noop);
-
-		// Information on RoboCopy exit codes: https://ss64.com/nt/robocopy-exit.html
-		// Exit codes higher than 7 indicate some kind of error.
-		// Returning true means success for the command line utility
-		await onExit(cp, (code) => code <= 7);
-	} else {
-		let cp = execFile('cp', ['-rf', srcDir, destDir], opts, noop);
-		await onExit(cp);
-	}
 }
 
 const noisyLog = /No repository field|No license field|SKIPPING OPTIONAL DEPENDENCY|You must install peer dependencies yourself/;
@@ -167,10 +134,13 @@ async function runTests(projectPath, prefix) {
 
 	const pkg = JSON.parse(await fs.readFile(pkgJsonPath, 'utf8'));
 
-	log(`Updating package.json with karmatic path...`);
-	pkg.dependencies['karmatic'] = pathToFileURL(repoRoot());
-	const newContents = JSON.stringify(pkg, null, 2);
-	await fs.writeFile(pkgJsonPath, newContents, 'utf8');
+	if (pkg.dependencies.karmatic == null) {
+		log(`Updating package.json with karmatic path...`);
+		const relativePath = path.relative(projectPath, repoRoot());
+		pkg.dependencies.karmatic = `file:` + relativePath.replace(/\\/g, '/');
+		const newContents = JSON.stringify(pkg, null, 2);
+		await fs.writeFile(pkgJsonPath, newContents, 'utf8');
+	}
 
 	await npmInstall(projectPath, prefix);
 
@@ -220,16 +190,14 @@ async function main(args) {
 		}
 	});
 
-	console.log(`Copying e2e-tests to ${e2eDestDir()}...`);
-	await fs.mkdir(e2eDestDir(), { recursive: true });
-	await copyDir(e2eSrcDir(), e2eDestDir());
-
 	let matchers = args.map((glob) => micromatch.matcher(glob));
-	let entries = await fs.readdir(e2eDestDir(), { withFileTypes: true });
+	let entries = await fs.readdir(e2eRoot(), { withFileTypes: true });
 	let projects = entries
 		.filter((p) => p.isDirectory)
 		.map((p) => p.name)
-		.filter((name) => matchers.some((isMatch) => isMatch(name)));
+		.filter((name) =>
+			matchers.length !== 0 ? matchers.some((isMatch) => isMatch(name)) : true
+		);
 
 	const length = projects.reduce((max, name) => Math.max(max, name.length), 0);
 	const getPrefix = (name) => `[${name.padEnd(length)}]`;
@@ -241,11 +209,7 @@ async function main(args) {
 	);
 
 	try {
-		// TODO: Consider parallelizing the test runs
-		// await pool(projects, (p) => runTests(e2eDestDir(p), getPrefix(p)));
-		for (let project of projects) {
-			await runTests(e2eDestDir(project), getPrefix(project));
-		}
+		await pool(projects, (p) => runTests(e2eRoot(p), getPrefix(p)));
 	} catch (e) {
 		console.error(e);
 		process.exitCode = 1;

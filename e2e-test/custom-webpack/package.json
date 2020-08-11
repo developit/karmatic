@@ -5,7 +5,8 @@
 	"dependencies": {
 		"@babel/core": "^7.10.3",
 		"babel-loader": "8.1.0",
-		"webpack": "^4.44.1",
-		"babel-plugin-transform-rename-properties": "^0.1.0"
+		"babel-plugin-transform-rename-properties": "^0.1.0",
+		"karmatic": "file:../..",
+		"webpack": "^4.44.1"
 	}
 }
