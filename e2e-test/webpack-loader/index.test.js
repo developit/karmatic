@@ -1,9 +1,10 @@
-import worker from 'workerize-loader!./fixture.worker.js';
+import { getWorker } from './index';
 
 describe('demo', () => {
 	it('should do MAGIC', async () => {
-		let mod = worker();
-		expect(mod.foo).toEqual(jasmine.any(Function));
-		expect(await mod.foo()).toEqual(1);
+		let worker = getWorker();
+
+		expect(worker.foo).toEqual(jasmine.any(Function));
+		expect(await worker.foo()).toEqual(1);
 	});
 });
