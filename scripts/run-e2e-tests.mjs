@@ -5,6 +5,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import chalk from 'chalk';
+import micromatch from 'micromatch';
 // import { pool } from '@kristoferbaxter/async';
 
 const IS_CI = process.env.CI === 'true';
@@ -197,7 +198,20 @@ async function runTests(projectPath, prefix) {
 	}
 }
 
-async function main() {
+/**
+ * @param {string[]} args
+ */
+async function main(args) {
+	if (args.includes('--help')) {
+		console.log(
+			`\nRun Karmatic E2E Tests.\n\n` +
+				`Accepts globs of matching e2e tests (directory names of the e2e-test folder) as arguments.\n` +
+				`Example: node ./scripts/run-e2e-tests.mjs default-*\n`
+		);
+
+		return;
+	}
+
 	process.on('exit', (code) => {
 		if (code !== 0) {
 			console.log(
@@ -210,11 +224,21 @@ async function main() {
 	await fs.mkdir(e2eDestDir(), { recursive: true });
 	await copyDir(e2eSrcDir(), e2eDestDir());
 
+	let matchers = args.map((glob) => micromatch.matcher(glob));
 	let entries = await fs.readdir(e2eDestDir(), { withFileTypes: true });
-	let projects = entries.filter((p) => p.isDirectory).map((p) => p.name);
+	let projects = entries
+		.filter((p) => p.isDirectory)
+		.map((p) => p.name)
+		.filter((name) => matchers.some((isMatch) => isMatch(name)));
 
 	const length = projects.reduce((max, name) => Math.max(max, name.length), 0);
 	const getPrefix = (name) => `[${name.padEnd(length)}]`;
+
+	console.log(
+		args.length === 0
+			? `Running all E2E tests.`
+			: `Running selected E2E tests: ${projects.join(', ')}`
+	);
 
 	try {
 		// TODO: Consider parallelizing the test runs
@@ -228,4 +252,4 @@ async function main() {
 	}
 }
 
-main();
+main(process.argv.slice(2));
