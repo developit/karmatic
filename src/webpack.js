@@ -116,6 +116,10 @@ export function addWebpackConfig(karmaConfig, pkg, options) {
 		mode: webpackConfig.mode || 'development',
 		module: {
 			// @TODO check webpack version and use loaders VS rules as the key here appropriately:
+			//
+			// TODO: Consider adding coverage as a separate babel-loader so that
+			// regardless if the user provides their own babel plugins, coverage still
+			// works
 			rules: loaders
 				.concat(
 					!getLoader((rule) =>
