@@ -117,7 +117,12 @@ async function npmInstall(cwd, prefix) {
 	await onExit(cp);
 }
 
-async function runTests(projectPath, prefix) {
+/**
+ * @param {string} projectPath
+ * @param {string} prefix
+ * @returns {Promise<() => Promise<void>>}
+ */
+async function setupTests(projectPath, prefix) {
 	const name = path.basename(projectPath);
 	const log = (...msgs) => console.log(`${info(prefix)}`, ...msgs);
 
@@ -144,28 +149,30 @@ async function runTests(projectPath, prefix) {
 
 	await npmInstall(projectPath, prefix);
 
-	const opts = { cwd: projectPath };
-	let cmd, args;
-	if (pkg.scripts && pkg.scripts.test) {
-		cmd = npmCmd;
-		args = ['test'];
-		log(`Running npm test...`);
-	} else {
-		cmd = process.execPath;
-		args = ['node_modules/karmatic/dist/cli.js', 'run'];
-		log(`Running karmatic...`);
-	}
+	return async () => {
+		const opts = { cwd: projectPath };
+		let cmd, args;
+		if (pkg.scripts && pkg.scripts.test) {
+			cmd = npmCmd;
+			args = ['test'];
+			log(`Running npm test...`);
+		} else {
+			cmd = process.execPath;
+			args = ['node_modules/karmatic/dist/cli.js', 'run'];
+			log(`Running karmatic...`);
+		}
 
-	// TODO: Need to use --preserve-sym-links and --preserve-sym-links-main (or the env variables) to make symlinked karmatic require work
-	const cp = execFile(cmd, args, opts);
-	cp.stdout.pipe(createPrefixTransform(info(prefix))).pipe(process.stdout);
-	cp.stderr.pipe(createPrefixTransform(error(prefix))).pipe(process.stderr);
+		// TODO: Need to use --preserve-sym-links and --preserve-sym-links-main (or the env variables) to make symlinked karmatic require work
+		const cp = execFile(cmd, args, opts);
+		cp.stdout.pipe(createPrefixTransform(info(prefix))).pipe(process.stdout);
+		cp.stderr.pipe(createPrefixTransform(error(prefix))).pipe(process.stderr);
 
-	try {
-		await onExit(cp);
-	} catch (e) {
-		console.error(error(prefix) + ` Test run failed: ${e.message}`);
-	}
+		try {
+			await onExit(cp);
+		} catch (e) {
+			console.error(error(prefix) + ` Test run failed: ${e.message}`);
+		}
+	};
 }
 
 /**
@@ -204,12 +211,23 @@ async function main(args) {
 
 	console.log(
 		args.length === 0
-			? `Running all E2E tests.`
-			: `Running selected E2E tests: ${projects.join(', ')}`
+			? `Setting up all E2E tests.`
+			: `Setting up selected E2E tests: ${projects.join(', ')}`
 	);
 
 	try {
-		await pool(projects, (p) => runTests(e2eRoot(p), getPrefix(p)));
+		// Run npm installs serially to avoid any weird behavior since we are
+		// installing using symlinks
+		let runners = [];
+		for (let project of projects) {
+			runners.push(await setupTests(e2eRoot(project), getPrefix(project)));
+		}
+
+		console.log('Running karmatic...');
+		// await pool(runners, (run) => run());
+		for (let run of runners) {
+			await run();
+		}
 	} catch (e) {
 		console.error(e);
 		process.exitCode = 1;
