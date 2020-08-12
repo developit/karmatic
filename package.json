@@ -7,7 +7,7 @@
 	"bin": "dist/cli.js",
 	"scripts": {
 		"prepare": "npm t",
-		"build": "microbundle --target node -f cjs --no-compress src/*.js",
+		"build": "microbundle --target node -f cjs --no-compress src/cli.js src/index.js",
 		"test:build": "node ./dist/cli.js run",
 		"test:watch": "node ./dist/cli.js watch --headless false",
 		"prettier": "prettier --write './**/*.{js,json,yml,md}'",
