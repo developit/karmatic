@@ -12,7 +12,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = (...args) => path.join(__dirname, '..', ...args);
 const e2eRoot = (...args) => repoRoot('e2e-test', ...args);
 
-const noop = () => {};
 const isWindows = process.platform === 'win32';
 const npmCmd = isWindows ? 'npm.cmd' : 'npm';
 
@@ -105,17 +104,26 @@ function createPrefixTransform(prefix) {
 	});
 }
 
+function getOpts(cwd) {
+	// https://nodejs.org/dist/latest/docs/api/cli.html#cli_node_preserve_symlinks_1
+	return {
+		cwd,
+		env: {
+			...process.env,
+			NODE_PRESERVE_SYMLINKS: '1',
+			NODE_PRESERVE_SYMLINKS_MAIN: '1',
+		},
+	};
+}
+
 /** Run `npm install` in the given directory */
 async function npmInstall(cwd, prefix) {
 	const name = path.basename(cwd);
-	prefix = prefix || `[${name}]`;
-
-	const args = ['install', '--no-fund'];
-	const options = { cwd, encoding: 'utf8' };
-
 	console.log(`${info(prefix)} Installing packages for "${name}"...`);
 
-	const cp = execFile(npmCmd, args, options, noop);
+	const cp = execFile(npmCmd, ['install', '--no-fund'], getOpts(cwd));
+
+	prefix = prefix || `[${name}]`;
 	cp.stdout.pipe(createPrefixTransform(info(prefix))).pipe(process.stdout);
 	cp.stderr.pipe(createPrefixTransform(error(prefix))).pipe(process.stderr);
 
@@ -155,7 +163,6 @@ async function setupTests(projectPath, prefix) {
 	await npmInstall(projectPath, prefix);
 
 	return async () => {
-		const opts = { cwd: projectPath };
 		let cmd, args;
 		if (pkg.scripts && pkg.scripts.test) {
 			cmd = npmCmd;
@@ -168,7 +175,7 @@ async function setupTests(projectPath, prefix) {
 		}
 
 		// TODO: Need to use --preserve-sym-links and --preserve-sym-links-main (or the env variables) to make symlinked karmatic require work
-		const cp = execFile(cmd, args, opts);
+		const cp = execFile(cmd, args, getOpts(projectPath));
 		cp.stdout.pipe(createPrefixTransform(info(prefix))).pipe(process.stdout);
 		cp.stderr.pipe(createPrefixTransform(error(prefix))).pipe(process.stderr);
 
@@ -178,6 +185,8 @@ async function setupTests(projectPath, prefix) {
 			process.exitCode = 1;
 			console.error(error(prefix) + ` Test run failed: ${e.message}`);
 		}
+
+		// TODO: validate coverage/lcov.info is not empty
 	};
 }
 
