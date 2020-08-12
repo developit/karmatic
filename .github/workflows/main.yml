@@ -12,8 +12,8 @@ jobs:
         with:
           node-version: 12
       - name: npm install, build, and test
+        # npm install runs build and test as well
         run: |
           npm install
-          npm test
         env:
           CI: true

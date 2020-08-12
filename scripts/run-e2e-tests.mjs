@@ -235,8 +235,8 @@ async function main(args) {
 			await run();
 		}
 	} catch (e) {
-		console.error(e);
 		process.exitCode = 1;
+		console.error(e);
 	}
 }
 
