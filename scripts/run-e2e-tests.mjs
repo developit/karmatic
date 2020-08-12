@@ -121,7 +121,7 @@ async function npmInstall(cwd, prefix) {
 	const name = path.basename(cwd);
 	console.log(`${info(prefix)} Installing packages for "${name}"...`);
 
-	const cp = execFile(npmCmd, ['install', '--no-fund'], getOpts(cwd));
+	const cp = execFile(npmCmd, ['install', '--no-fund'], { cwd });
 
 	prefix = prefix || `[${name}]`;
 	cp.stdout.pipe(createPrefixTransform(info(prefix))).pipe(process.stdout);
