@@ -7,8 +7,6 @@ import chalk from 'chalk';
 import micromatch from 'micromatch';
 import { pool } from '@kristoferbaxter/async';
 
-const IS_CI = process.env.CI === 'true';
-
 // @ts-ignore
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = (...args) => path.join(__dirname, '..', ...args);
@@ -112,7 +110,7 @@ async function npmInstall(cwd, prefix) {
 	const name = path.basename(cwd);
 	prefix = prefix || `[${name}]`;
 
-	const args = [IS_CI ? 'ci' : 'install', '--no-fund'];
+	const args = ['install', '--no-fund'];
 	const options = { cwd, encoding: 'utf8' };
 
 	console.log(`${info(prefix)} Installing packages for "${name}"...`);
@@ -177,6 +175,7 @@ async function setupTests(projectPath, prefix) {
 		try {
 			await onExit(cp);
 		} catch (e) {
+			process.exitCode = 1;
 			console.error(error(prefix) + ` Test run failed: ${e.message}`);
 		}
 	};
