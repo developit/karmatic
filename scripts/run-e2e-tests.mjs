@@ -105,7 +105,51 @@ function createPrefixTransform(prefix) {
 }
 
 function getOpts(cwd) {
+	// # Why Enable NODE_PRESERVE_SYMLINKS and NODE_PRESERVE_SYMLINKS_MAIN
+	//
+	// When running karmatic in the e2e-test folder, when need to ensure that
+	// Node's `require` follows the symlinks we have set up so that karmatic sees
+	// the e2e-test local install of webpack.
+	//
+	// Karmatic's behavior changes based on what the user has installed. So, to
+	// validate these different kinds of installations our tests runs karmatic
+	// with different peer deps installed.
+	//
+	// To simulate this, each e2e-test package has a local install of karmatic.
+	// This local install actually just points to the current repository using a
+	// file reference: `file:../..`. This reference instructs npm to install the
+	// referenced folder as a symbolic link in the e2e-test's node_modules folder:
+	//
+	//    e2e-test/webpack-default/node_modules/karmatic/dist/cli.js
+	//
+	// However, by default, NodeJS's `require` function resolves packages from a
+	// module's real location, not symbolic location. So when running karmatic
+	// from the symbolic directory above, NodeJS would see that file's location as
+	// the following:
+	//
+	//    dist/cli.js
+	//
+	// This behavior causes us problems because we want Node's require function to
+	// use the symbolic location so it can find whatever peer deps the e2e test
+	// has installed (e.g. webpack). Those peer deps aren't available at the root
+	// of the repo, so resolving from `dist/cli.js` would never see webpack
+	// installed at `e2e-test/webpack-default/node_modules/webpack`.
+	//
+	// To fix this, we enable the `NODE_PRESERVE_SYMLINKS` and
+	// `NODE_PRESERVE_SYMLINKS_MAIN` environment variables instructing Node's
+	// require function to use a module's symbolic path to resolve modules. This
+	// behavior means that when karmatic tries to require `webpack` in the e2e
+	// tests, it will attempt to find `webpack` from
+	//
+	//    e2e-test/webpack-default/node_modules/karmatic/dist/cli.js
+	//
+	// and should locate the `webpack` installation at
+	//
+	//    e2e-test/webpack-default/node_modules/webpack
+	//
+	// Documentation:
 	// https://nodejs.org/dist/latest/docs/api/cli.html#cli_node_preserve_symlinks_1
+
 	return {
 		cwd,
 		env: {
@@ -174,7 +218,6 @@ async function setupTests(projectPath, prefix) {
 			log(`Running karmatic...`);
 		}
 
-		// TODO: Need to use --preserve-sym-links and --preserve-sym-links-main (or the env variables) to make symlinked karmatic require work
 		const cp = execFile(cmd, args, getOpts(projectPath));
 		cp.stdout.pipe(createPrefixTransform(info(prefix))).pipe(process.stdout);
 		cp.stderr.pipe(createPrefixTransform(error(prefix))).pipe(process.stderr);
