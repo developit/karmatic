@@ -1,4 +1,15 @@
-export default function babelLoader(options) {
+export function getCoverageBabelLoader() {
+	return {
+		test: /\.jsx?$/,
+		exclude: /node_modules/,
+		loader: require.resolve('babel-loader'),
+		query: {
+			plugins: [require.resolve('babel-plugin-istanbul')],
+		},
+	};
+}
+
+export function getDefaultBabelLoader(options) {
 	return {
 		test: /\.jsx?$/,
 		exclude: /node_modules/,

@@ -1,7 +1,10 @@
 import path from 'path';
 import delve from 'dlv';
 import { tryRequire, dedupe } from './lib/util';
-import babelLoader from './lib/babel-loader';
+import {
+	getDefaultBabelLoader,
+	getCoverageBabelLoader,
+} from './lib/babel-loader';
 import cssLoader from './lib/css-loader';
 
 /**
@@ -104,6 +107,21 @@ export function addWebpackConfig(karmaConfig, pkg, options) {
 		return Object.assign({}, configured || {}, value);
 	}
 
+	let existingBabelLoader = getLoader((rule) =>
+		`${rule.use},${rule.loader}`.match(/\bbabel-loader\b/)
+	);
+	if (existingBabelLoader) {
+		if (options.coverage) {
+			loaders.push(getCoverageBabelLoader());
+		}
+	} else {
+		loaders.push(getDefaultBabelLoader(options));
+	}
+
+	if (!getLoader('foo.css')) {
+		loaders.push(cssLoader(options));
+	}
+
 	for (let prop of Object.keys(karmaConfig.preprocessors)) {
 		karmaConfig.preprocessors[prop].unshift('webpack');
 	}
@@ -116,20 +134,7 @@ export function addWebpackConfig(karmaConfig, pkg, options) {
 		mode: webpackConfig.mode || 'development',
 		module: {
 			// @TODO check webpack version and use loaders VS rules as the key here appropriately:
-			//
-			// TODO: Consider adding coverage as a separate babel-loader so that
-			// regardless if the user provides their own babel plugins, coverage still
-			// works
-			rules: loaders
-				.concat(
-					!getLoader((rule) =>
-						`${rule.use},${rule.loader}`.match(/\bbabel-loader\b/)
-					)
-						? babelLoader(options)
-						: false,
-					!getLoader('foo.css') && cssLoader(options)
-				)
-				.filter(Boolean),
+			rules: loaders,
 		},
 		resolve: webpackProp('resolve', {
 			modules: webpackProp('resolve.modules', [
