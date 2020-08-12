@@ -29,6 +29,7 @@ async function fileExists(file) {
 }
 
 /**
+ * Return a promise that resolves/rejects when the child process exits
  * @param {import('child_process').ChildProcess} childProcess
  * @param {(code: number, signal: string) => boolean} [isSuccess]
  */
@@ -53,6 +54,11 @@ async function onExit(childProcess, isSuccess) {
 }
 
 const noisyLog = /No repository field|No license field|SKIPPING OPTIONAL DEPENDENCY|You must install peer dependencies yourself/;
+
+/**
+ * Prefix every line in a stream with the given prefix
+ * @param {string} prefix
+ */
 function createPrefixTransform(prefix) {
 	let incompleteLine = '';
 	return new Transform({
@@ -101,6 +107,7 @@ function createPrefixTransform(prefix) {
 	});
 }
 
+/** Run `npm install` in the given directory */
 async function npmInstall(cwd, prefix) {
 	const name = path.basename(cwd);
 	prefix = prefix || `[${name}]`;
