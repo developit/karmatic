@@ -8,11 +8,9 @@
 	"scripts": {
 		"prepare": "npm t",
 		"build": "microbundle --target node -f cjs --no-compress src/index.js src/cli.js src/appender.js",
-		"test:build": "node ./dist/cli.js run test/**/*.test.js e2e-test/default-webpack/*.test.js",
-		"test:watch": "node ./dist/cli.js watch test/**/*.test.js e2e-test/default-webpack/*.test.js --headless false",
 		"test:e2e": "node ./scripts/run-e2e-tests.mjs",
 		"prettier": "prettier --write './**/*.{js,mjs,json,yml,md}'",
-		"test": "prettier --check \"./**/*.{js,mjs,json,yml,md}\" && eslint src test e2e-test && npm run -s build && npm run -s test:build && npm run -s test:e2e",
+		"test": "prettier --check \"./**/*.{js,mjs,json,yml,md}\" && eslint src e2e-test && npm run -s build && npm run -s test:e2e",
 		"release": "npm run -s prepare && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
 	},
 	"eslintConfig": {
@@ -40,9 +38,7 @@
 		"microbundle": "^0.12.2",
 		"micromatch": "^4.0.2",
 		"prettier": "^1.19.1",
-		"puppeteer": "^4.0.1",
-		"webpack": "^4.43.0",
-		"workerize-loader": "^1.3.0"
+		"puppeteer": "^4.0.1"
 	},
 	"dependencies": {
 		"@babel/core": "^7.11.0",
