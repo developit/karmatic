@@ -2,8 +2,15 @@
 	"name": "karmatic-e2e-webpack-default",
 	"description": "Test default webpack config in karmatic. Mildly complex src implementation to verify coverage works",
 	"private": true,
+	"scripts": {
+		"test": "cross-env NODE_PRESERVE_SYMLINKS_MAIN=1 NODE_PRESERVE_SYMLINKS=1 node ./node_modules/karmatic/dist/cli.js run",
+		"test:watch": "cross-env NODE_PRESERVE_SYMLINKS_MAIN=1 NODE_PRESERVE_SYMLINKS=1 node ./node_modules/karmatic/dist/cli.js --headless false"
+	},
 	"dependencies": {
 		"karmatic": "file:../..",
 		"webpack": "^4.44.1"
+	},
+	"devDependencies": {
+		"cross-env": "^7.0.2"
 	}
 }

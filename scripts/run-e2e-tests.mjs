@@ -207,18 +207,20 @@ async function setupTests(projectPath, prefix) {
 	await npmInstall(projectPath, prefix);
 
 	return async () => {
-		let cmd, args;
+		let cmd, args, opts;
 		if (pkg.scripts && pkg.scripts.test) {
 			cmd = npmCmd;
 			args = ['test'];
+			opts = { cwd: projectPath };
 			log(`Running npm test...`);
 		} else {
 			cmd = process.execPath;
 			args = ['node_modules/karmatic/dist/cli.js', 'run'];
+			opts = getOpts(projectPath);
 			log(`Running karmatic...`);
 		}
 
-		const cp = execFile(cmd, args, getOpts(projectPath));
+		const cp = execFile(cmd, args, opts);
 		cp.stdout.pipe(createPrefixTransform(info(prefix))).pipe(process.stdout);
 		cp.stderr.pipe(createPrefixTransform(error(prefix))).pipe(process.stderr);
 
