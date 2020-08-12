@@ -1,5 +1,5 @@
 {
-	"name": "karmatic-e2e-custom-webpack",
+	"name": "karmatic-e2e-webpack-custom",
 	"description": "Test custom webpack config in karmatic using a custom Babel config",
 	"private": true,
 	"dependencies": {

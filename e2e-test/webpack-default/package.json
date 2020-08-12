@@ -1,5 +1,5 @@
 {
-	"name": "karmatic-e2e-default-webpack",
+	"name": "karmatic-e2e-webpack-default",
 	"description": "Test default webpack config in karmatic. Mildly complex src implementation to verify coverage works",
 	"private": true,
 	"dependencies": {
