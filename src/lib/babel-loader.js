@@ -20,7 +20,7 @@ export default function babelLoader(options) {
 									'ie>=9',
 							].filter(Boolean),
 						},
-						corejs: 2,
+						corejs: 3,
 						useBuiltIns: 'usage',
 						modules: false,
 						loose: true,
@@ -28,13 +28,6 @@ export default function babelLoader(options) {
 				],
 			],
 			plugins: [
-				[
-					require.resolve('@babel/plugin-proposal-object-rest-spread'),
-					{
-						loose: true,
-						useBuiltIns: true,
-					},
-				],
 				[
 					require.resolve('@babel/plugin-transform-react-jsx'),
 					{
