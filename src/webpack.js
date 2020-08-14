@@ -133,7 +133,6 @@ export function addWebpackConfig(karmaConfig, pkg, options) {
 		// devtool: 'module-source-map',
 		mode: webpackConfig.mode || 'development',
 		module: {
-			// @TODO check webpack version and use loaders VS rules as the key here appropriately:
 			rules: loaders,
 		},
 		resolve: webpackProp('resolve', {
