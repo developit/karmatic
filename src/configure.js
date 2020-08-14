@@ -1,5 +1,4 @@
 import path from 'path';
-import puppeteer from 'puppeteer';
 import chalk from 'chalk';
 import { tryRequire, cleanStack, readFile, readDir } from './lib/util';
 import { shouldUseWebpack, addWebpackConfig } from './webpack';
@@ -25,7 +24,10 @@ export default function configure(options) {
 	let files = options.files.filter(Boolean);
 	if (!files.length) files = ['**/{*.test.js,*_test.js}'];
 
-	process.env.CHROME_BIN = puppeteer.executablePath();
+	try {
+		const puppeteer = require('puppeteer');
+		process.env.CHROME_BIN = puppeteer.executablePath();
+	} catch (e) {}
 
 	let gitignore = (readFile(path.resolve(cwd, '.gitignore')) || '')
 		.replace(/(^\s*|\s*$|#.*$)/g, '')

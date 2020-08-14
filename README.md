@@ -1,6 +1,6 @@
-# Karmatic [![npm](https://img.shields.io/npm/v/karmatic.svg)](https://npm.im/karmatic) [![travis](https://travis-ci.org/developit/karmatic.svg?branch=master)](https://travis-ci.org/developit/karmatic)
+# Karmatic [![npm](https://img.shields.io/npm/v/karmatic.svg)](https://npm.im/karmatic) [![CI](https://github.com/developit/karmatic/workflows/CI/badge.svg?event=push)](https://github.com/developit/karmatic/actions?query=workflow%3ACI+branch%3Amaster)
 
-A simplified zero-configuration wrapper around [Karma], [Webpack], [Jasmine] & [Puppeteer].
+A simplified zero-configuration wrapper around [Karma], [Webpack] & [Jasmine].
 
 Think of it like **Jest for cross-browser testing** - it even uses the same [expect syntax](https://jestjs.io/docs/en/using-matchers).
 
@@ -29,6 +29,8 @@ npm i -D webpack karmatic
 ```
 
 ... now you can run your tests using `npm t`. Here's a [minimal example repo](https://gist.github.com/developit/acd8a075350eeb6574439e92888c50cf).
+
+Don't have Chrome installed? Use [puppeteer]. Run `npm i -D puppeteer` to download a local installation of Chromium that karmatic will use.
 
 ### Test File Patterns
 
@@ -67,16 +69,18 @@ For more info, run any command with the `--help` flag
     $ karmatic watch --help
 
 Options
-    -v, --version    Displays current version
-    --files          Minimatch pattern for test files
-    --headless       Run using Chrome Headless  (default true)
-    --coverage       Report code coverage of tests  (default true)
-    -h, --help       Displays this message
+    --files            Minimatch pattern for test files
+    --headless         Run using Chrome Headless  (default true)
+    --coverage         Report code coverage of tests  (default true)
+    --downlevel        Downlevel syntax to ES5
+    --chromeDataDir    Save Chrome preferences
+    -v, --version      Displays current version
+    -h, --help         Displays this message
 ```
 
 To disable any option that defaults to `true`, pass `false` to the option: `--headless false` or `--coverage false`.
 
-NOTE: The `debug` option overrides the default value of the `--headless` and `--coverage` option to be `false`. This option will also open up the local Puppeteer installation of Chrome, not your globally installed one. If you'd like to debug your tests using your your own instance of Chrome (or any other browser), copy the URL from the puppeteer window into your favorite browser.
+NOTE: The `debug` option overrides the default value of the `--headless` and `--coverage` option to be `false`. This option will also open up Chrome with some special flags set. If you'd like to debug your tests using your your own instance of Chrome (or any other browser), copy the URL from the puppeteer window into your favorite browser.
 
 ## FAQ
 
