@@ -3,8 +3,7 @@ import puppeteer from 'puppeteer';
 import chalk from 'chalk';
 import { tryRequire, cleanStack, readFile, readDir } from './lib/util';
 import { shouldUseWebpack, addWebpackConfig } from './webpack';
-import { shouldUseRollup, addRollupConfig } from './rollup';
-// import minimatch from 'minimatch';
+import { addRollupConfig } from './rollup';
 
 /**
  * @typedef Options
@@ -221,16 +220,8 @@ export default async function configure(options) {
 
 	if (shouldUseWebpack(options)) {
 		addWebpackConfig(generatedConfig, pkg, options);
-	} else if (shouldUseRollup(options)) {
-		await addRollupConfig(generatedConfig, pkg, options);
 	} else {
-		console.error(
-			chalk.red(
-				`Could not load "webpack" or "rollup". Install one of them and we're good to go :)`
-			)
-		);
-
-		process.exit(1);
+		await addRollupConfig(generatedConfig, pkg, options);
 	}
 
 	return generatedConfig;

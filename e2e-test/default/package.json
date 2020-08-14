@@ -1,0 +1,14 @@
+{
+	"name": "karmatic-e2e-default",
+	"description": "Test default config in karmatic.",
+	"private": true,
+	"scripts": {
+		"test:debug": "cross-env NODE_PRESERVE_SYMLINKS_MAIN=1 NODE_PRESERVE_SYMLINKS=1 node ./node_modules/karmatic/dist/cli.js debug"
+	},
+	"dependencies": {
+		"karmatic": "file:../.."
+	},
+	"devDependencies": {
+		"cross-env": "^7.0.2"
+	}
+}

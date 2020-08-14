@@ -68,12 +68,12 @@
 		"karma-spec-reporter": "0.0.32",
 		"karma-webpack": "^4.0.2",
 		"minimatch": "^3.0.4",
+		"rollup": "^2.3.4",
 		"sade": "^1.7.3",
 		"simple-code-frame": "^1.0.0"
 	},
 	"peerDependencies": {
 		"puppeteer": "*",
-		"webpack": ">=4",
-		"rollup": ">=2.3.4"
+		"webpack": ">=4"
 	}
 }

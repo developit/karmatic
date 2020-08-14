@@ -15,7 +15,7 @@ Most importantly, Karmatic provides a (headless) browser test harness in a singl
 ## Installation
 
 ```sh
-npm i -D rollup karmatic
+npm i -D karmatic
 ```
 
 ... then add a `test` script to your `package.json`:
@@ -30,7 +30,7 @@ npm i -D rollup karmatic
 
 ... now you can run your tests using `npm t`. Here's a [minimal example repo](https://gist.github.com/developit/acd8a075350eeb6574439e92888c50cf).
 
-Use Webpack instead? Replace `rollup` with `webpack` in the installation command above and Karmatic will use your webpack config to bundle instead
+If you have webpack set up in your project, it will be detected and your `webpack.config.js` will be used. Otherwise, Rollup is used to bundle tests and any `rollup.config.js` will be used if present.
 
 ### Test File Patterns
 

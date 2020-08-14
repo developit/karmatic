@@ -89,21 +89,6 @@ async function getRollupConfig(pkg, options) {
 }
 
 /**
- * @param {import('./configure').Options} options
- * @returns {boolean}
- */
-export function shouldUseRollup(options) {
-	let shouldUse = true;
-	try {
-		require('rollup');
-	} catch (error) {
-		shouldUse = false;
-	}
-
-	return shouldUse;
-}
-
-/**
  * @param {Object} karmaConfig
  * @param {Object} pkg
  * @param {import('./configure').Options} options
