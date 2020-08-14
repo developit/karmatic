@@ -1,0 +1,15 @@
+{
+	"name": "karmatic-e2e-rollup-default",
+	"description": "Test default rollup config in karmatic. Mildly complex src implementation to verify coverage works",
+	"private": true,
+	"scripts": {
+		"test:debug": "cross-env NODE_PRESERVE_SYMLINKS_MAIN=1 NODE_PRESERVE_SYMLINKS=1 node ./node_modules/karmatic/dist/cli.js debug"
+	},
+	"dependencies": {
+		"rollup": "^2.23.1",
+		"karmatic": "file:../.."
+	},
+	"devDependencies": {
+		"cross-env": "^7.0.2"
+	}
+}

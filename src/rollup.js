@@ -17,12 +17,12 @@ function getDefaultConfig(options) {
 			sourcemap: 'inline',
 		},
 		plugins: [
-			commonjs(),
-			nodeResolve(),
 			babel({
 				babelHelpers: 'bundled',
 				...babelConfig(options),
 			}),
+			nodeResolve(),
+			commonjs(),
 		],
 	};
 }
