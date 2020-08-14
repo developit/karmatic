@@ -74,6 +74,6 @@
 	"peerDependencies": {
 		"puppeteer": "*",
 		"webpack": ">=4",
-		"rollup": ">=2.3.0"
+		"rollup": ">=2.3.4"
 	}
 }
