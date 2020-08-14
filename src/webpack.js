@@ -1,10 +1,7 @@
 import path from 'path';
 import delve from 'dlv';
 import { tryRequire, dedupe } from './lib/util';
-import {
-	getDefaultBabelLoader,
-	getCoverageBabelLoader,
-} from './lib/babel-loader';
+import { getDefaultBabelLoader } from './lib/babel-loader';
 import cssLoader from './lib/css-loader';
 
 /**
@@ -107,12 +104,23 @@ export function addWebpackConfig(karmaConfig, pkg, options) {
 		return Object.assign({}, configured || {}, value);
 	}
 
-	let existingBabelLoader = getLoader((rule) =>
+	let babelLoader = getLoader((rule) =>
 		`${rule.use},${rule.loader}`.match(/\bbabel-loader\b/)
 	);
-	if (existingBabelLoader) {
+	if (babelLoader) {
 		if (options.coverage) {
-			loaders.push(getCoverageBabelLoader());
+			if (babelLoader.loader.query) {
+				babelLoader.loader.query.plugins = [
+					...(babelLoader.loader.query?.plugins ?? []),
+					require.resolve('babel-plugin-istanbul'),
+				];
+			} else {
+				babelLoader.loader.options = babelLoader.loader.options || {};
+				babelLoader.loader.options.plugins = [
+					...(babelLoader.loader.options?.plugins ?? []),
+					require.resolve('babel-plugin-istanbul'),
+				];
+			}
 		}
 	} else {
 		loaders.push(getDefaultBabelLoader(options));
