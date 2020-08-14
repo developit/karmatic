@@ -21,7 +21,7 @@ import { shouldUseRollup, addRollupConfig } from './rollup';
  *
  * @param {Options} options
  */
-export default function configure(options) {
+export default async function configure(options) {
 	let cwd = process.cwd(),
 		res = (file) => path.resolve(cwd, file);
 
@@ -222,7 +222,7 @@ export default function configure(options) {
 	if (shouldUseWebpack(options)) {
 		addWebpackConfig(generatedConfig, pkg, options);
 	} else if (shouldUseRollup(options)) {
-		addRollupConfig(generatedConfig, pkg, options);
+		await addRollupConfig(generatedConfig, pkg, options);
 	} else {
 		console.error(
 			chalk.red(

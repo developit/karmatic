@@ -1,6 +1,5 @@
-import chalk from 'chalk';
 import { babelConfig } from './lib/babel';
-import { res, tryRequire } from './lib/util';
+import { res, fileExists } from './lib/util';
 
 /**
  * @param {import('./configure').Options} options
@@ -31,8 +30,12 @@ function getDefaultConfig(options) {
  * @param {Object} pkg
  * @param {import('./configure').Options} options
  */
-function getRollupConfig(pkg, options) {
-	const ROLLUP_CONFIGS = ['rollup.config.js'];
+async function getRollupConfig(pkg, options) {
+	const ROLLUP_CONFIGS = [
+		'rollup.config.mjs',
+		'rollup.config.cjs',
+		'rollup.config.js',
+	];
 
 	let rollupConfig = options.rollupConfig;
 
@@ -52,27 +55,31 @@ function getRollupConfig(pkg, options) {
 	if (!rollupConfig) {
 		for (let i = ROLLUP_CONFIGS.length; i--; ) {
 			// TODO: Breaks if rollup.config.js uses ES Modules... :(
-			rollupConfig = tryRequire(res(ROLLUP_CONFIGS[i]));
-			if (rollupConfig) break;
+			const possiblePath = res(ROLLUP_CONFIGS[i]);
+			if (fileExists(possiblePath)) {
+				// Require Rollup 2.3.0 for this export: https://github.com/rollup/rollup/blob/master/CHANGELOG.md#230
+				const loadConfigFile = require('rollup/dist/loadConfigFile');
+				const rollupConfigResult = await loadConfigFile(possiblePath);
+				rollupConfigResult.warnings.flush();
+
+				if (rollupConfigResult.options.length > 1) {
+					console.error(
+						'Rollup config returns an array configs. Using the first one for tests'
+					);
+				}
+
+				rollupConfig = rollupConfigResult.options[0];
+				break;
+			}
 		}
 	}
 
-	if (typeof rollupConfig === 'function') {
-		rollupConfig = rollupConfig({ karmatic: true });
+	if (rollupConfig) {
+		// TODO: Add babel + coverage plugin to existing config
+		return rollupConfig;
 	}
 
-	if (Array.isArray(rollupConfig)) {
-		rollupConfig = rollupConfig[0];
-	} else if (rollupConfig && rollupConfig.then) {
-		rollupConfig = null;
-		console.warn(
-			chalk.yellow(
-				`Karmatic does not currently support asynchronous rollup configs. Using a default config instead.`
-			)
-		);
-	}
-
-	return rollupConfig || getDefaultConfig(options);
+	return getDefaultConfig(options);
 }
 
 /**
@@ -95,7 +102,7 @@ export function shouldUseRollup(options) {
  * @param {Object} pkg
  * @param {import('./configure').Options} options
  */
-export function addRollupConfig(karmaConfig, pkg, options) {
+export async function addRollupConfig(karmaConfig, pkg, options) {
 	// From karma-rollup-preprocessor readme:
 	// Make sure to disable Karma’s file watcher
 	// because the preprocessor will use its own.
@@ -114,5 +121,5 @@ export function addRollupConfig(karmaConfig, pkg, options) {
 
 	karmaConfig.plugins.push(require.resolve('karma-rollup-preprocessor'));
 
-	karmaConfig.rollupPreprocessor = getRollupConfig(pkg, options);
+	karmaConfig.rollupPreprocessor = await getRollupConfig(pkg, options);
 }
