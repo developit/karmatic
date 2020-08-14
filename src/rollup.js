@@ -54,12 +54,11 @@ async function getRollupConfig(pkg, options) {
 
 	if (!rollupConfig) {
 		for (let i = ROLLUP_CONFIGS.length; i--; ) {
-			// TODO: Breaks if rollup.config.js uses ES Modules... :(
-			const possiblePath = res(ROLLUP_CONFIGS[i]);
+			let possiblePath = res(ROLLUP_CONFIGS[i]);
 			if (fileExists(possiblePath)) {
 				// Require Rollup 2.3.0 for this export: https://github.com/rollup/rollup/blob/master/CHANGELOG.md#230
-				const loadConfigFile = require('rollup/dist/loadConfigFile');
-				const rollupConfigResult = await loadConfigFile(possiblePath);
+				let loadConfigFile = require('rollup/dist/loadConfigFile');
+				let rollupConfigResult = await loadConfigFile(possiblePath);
 				rollupConfigResult.warnings.flush();
 
 				if (rollupConfigResult.options.length > 1) {
@@ -75,7 +74,14 @@ async function getRollupConfig(pkg, options) {
 	}
 
 	if (rollupConfig) {
-		// TODO: Add babel + coverage plugin to existing config
+		let babel = require('@rollup/plugin-babel').default;
+		rollupConfig.plugins = (rollupConfig.plugins || []).concat([
+			babel({
+				babelHelpers: 'bundled',
+				plugins: [require.resolve('babel-plugin-istanbul')],
+			}),
+		]);
+
 		return rollupConfig;
 	}
 
