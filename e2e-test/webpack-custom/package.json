@@ -4,6 +4,7 @@
 	"private": true,
 	"dependencies": {
 		"@babel/core": "^7.10.3",
+		"@babel/plugin-transform-react-jsx": "^7.10.3",
 		"babel-loader": "8.1.0",
 		"babel-plugin-transform-rename-properties": "^0.1.0",
 		"karmatic": "file:../..",

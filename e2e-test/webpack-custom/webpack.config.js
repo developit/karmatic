@@ -9,7 +9,7 @@ module.exports = {
 					plugins: [
 						[
 							'babel-plugin-transform-rename-properties',
-							{ rename: { _value: '__v' } },
+							{ rename: { _value2: '__v2', tag: '__t' } },
 						],
 					],
 				},

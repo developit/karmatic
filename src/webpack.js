@@ -1,7 +1,7 @@
 import path from 'path';
 import delve from 'dlv';
 import { tryRequire, dedupe } from './lib/util';
-import babelLoader from './lib/babel-loader';
+import { getDefaultBabelLoader } from './lib/babel-loader';
 import cssLoader from './lib/css-loader';
 
 /**
@@ -104,6 +104,32 @@ export function addWebpackConfig(karmaConfig, pkg, options) {
 		return Object.assign({}, configured || {}, value);
 	}
 
+	let babelLoader = getLoader((rule) =>
+		`${rule.use},${rule.loader}`.match(/\bbabel-loader\b/)
+	);
+	if (babelLoader) {
+		if (options.coverage) {
+			if (babelLoader.loader.query) {
+				babelLoader.loader.query.plugins = [
+					...(babelLoader.loader.query?.plugins ?? []),
+					require.resolve('babel-plugin-istanbul'),
+				];
+			} else {
+				babelLoader.loader.options = babelLoader.loader.options || {};
+				babelLoader.loader.options.plugins = [
+					...(babelLoader.loader.options?.plugins ?? []),
+					require.resolve('babel-plugin-istanbul'),
+				];
+			}
+		}
+	} else {
+		loaders.push(getDefaultBabelLoader(options));
+	}
+
+	if (!getLoader('foo.css')) {
+		loaders.push(cssLoader(options));
+	}
+
 	for (let prop of Object.keys(karmaConfig.preprocessors)) {
 		karmaConfig.preprocessors[prop].unshift('webpack');
 	}
@@ -115,21 +141,7 @@ export function addWebpackConfig(karmaConfig, pkg, options) {
 		// devtool: 'module-source-map',
 		mode: webpackConfig.mode || 'development',
 		module: {
-			// @TODO check webpack version and use loaders VS rules as the key here appropriately:
-			//
-			// TODO: Consider adding coverage as a separate babel-loader so that
-			// regardless if the user provides their own babel plugins, coverage still
-			// works
-			rules: loaders
-				.concat(
-					!getLoader((rule) =>
-						`${rule.use},${rule.loader}`.match(/\bbabel-loader\b/)
-					)
-						? babelLoader(options)
-						: false,
-					!getLoader('foo.css') && cssLoader(options)
-				)
-				.filter(Boolean),
+			rules: loaders,
 		},
 		resolve: webpackProp('resolve', {
 			modules: webpackProp('resolve.modules', [

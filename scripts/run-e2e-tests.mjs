@@ -181,17 +181,22 @@ async function npmInstall(cwd, prefix) {
  */
 async function setupTests(projectPath, prefix) {
 	const name = path.basename(projectPath);
-	const log = (...msgs) => console.log(`${info(prefix)}`, ...msgs);
+	const log = (...msgs) => console.log(info(prefix), ...msgs);
+	const throwError = (...msgs) => {
+		process.exitCode = 1;
+		console.error(error(prefix), ...msgs.map((msg) => error(msg)));
+		throw new Error(msgs[0]);
+	};
 
 	log(`Beginning E2E test at`, projectPath);
 	const pkgJsonPath = path.join(projectPath, 'package.json');
 	if (!(await fileExists(pkgJsonPath))) {
 		prefix = error(prefix);
-		console.error(
-			`${prefix} Could not locate package.json for "${name}". Ensure every e2e test has a package.json defined.`
+		throwError(
+			`Could not locate package.json for "${name}".`,
+			`Ensure every e2e test has a package.json.\n`,
+			`${prefix} Expected to find one at "${pkgJsonPath}".`
 		);
-		console.error(`${prefix} Expected to find one at "${pkgJsonPath}".`);
-		throw new Error(`Could not locate package.json for "${name}".`);
 	}
 
 	const pkg = JSON.parse(await fs.readFile(pkgJsonPath, 'utf8'));
@@ -228,10 +233,22 @@ async function setupTests(projectPath, prefix) {
 			await onExit(cp);
 		} catch (e) {
 			process.exitCode = 1;
-			console.error(error(prefix) + ` Test run failed: ${e.message}`);
+			throwError(`Test run failed: ${e.message}`);
 		}
 
-		// TODO: validate coverage/lcov.info is not empty
+		const coveragePath = path.join(projectPath, 'coverage', 'lcov.info');
+		if (!(await fileExists)) {
+			throwError(
+				`Code coverage failed to generate results: Results file does not exist at ${coveragePath}`
+			);
+		}
+
+		const coverageInfo = await fs.readFile(coveragePath, { encoding: 'utf8' });
+		if (!coverageInfo) {
+			throwError(
+				`Code coverage failed to generate results: Results file is empty`
+			);
+		}
 	};
 }
 
