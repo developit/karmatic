@@ -1,6 +1,6 @@
 # Karmatic [![npm](https://img.shields.io/npm/v/karmatic.svg)](https://npm.im/karmatic) [![travis](https://travis-ci.org/developit/karmatic.svg?branch=master)](https://travis-ci.org/developit/karmatic)
 
-A simplified zero-configuration wrapper around [Karma], [Rollup] or [Webpack], [Jasmine] & [Puppeteer].
+Zero-config browser tests powered by [Karma] & [Puppeteer], with automatic [Rollup] & [Webpack] support.
 
 Think of it like **Jest for cross-browser testing** - it even uses the same [expect syntax](https://jestjs.io/docs/en/using-matchers).
 
