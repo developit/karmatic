@@ -39,8 +39,7 @@
 		"eslint-config-prettier": "^6.11.0",
 		"microbundle": "^0.12.2",
 		"micromatch": "^4.0.2",
-		"prettier": "^1.19.1",
-		"puppeteer": "^4.0.1"
+		"prettier": "^1.19.1"
 	},
 	"dependencies": {
 		"@babel/core": "^7.11.0",
@@ -68,7 +67,6 @@
 		"simple-code-frame": "^1.0.0"
 	},
 	"peerDependencies": {
-		"puppeteer": "*",
 		"webpack": ">=4"
 	}
 }
