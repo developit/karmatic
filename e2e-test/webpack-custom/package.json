@@ -2,11 +2,17 @@
 	"name": "karmatic-e2e-webpack-custom",
 	"description": "Test custom webpack config in karmatic using a custom Babel config",
 	"private": true,
+	"scripts": {
+		"test:debug": "cross-env NODE_PRESERVE_SYMLINKS_MAIN=1 NODE_PRESERVE_SYMLINKS=1 node ./node_modules/karmatic/dist/cli.js debug"
+	},
 	"dependencies": {
 		"@babel/core": "^7.10.3",
 		"babel-loader": "8.1.0",
 		"babel-plugin-transform-rename-properties": "^0.1.0",
 		"karmatic": "file:../..",
 		"webpack": "^4.44.1"
+	},
+	"devDependencies": {
+		"cross-env": "^7.0.2"
 	}
 }
