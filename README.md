@@ -1,12 +1,12 @@
 # Karmatic [![npm](https://img.shields.io/npm/v/karmatic.svg)](https://npm.im/karmatic) [![travis](https://travis-ci.org/developit/karmatic.svg?branch=master)](https://travis-ci.org/developit/karmatic)
 
-A simplified zero-configuration wrapper around [Karma], [Webpack], [Jasmine] & [Puppeteer].
+A simplified zero-configuration wrapper around [Karma], [Rollup] or [Webpack], [Jasmine] & [Puppeteer].
 
 Think of it like **Jest for cross-browser testing** - it even uses the same [expect syntax](https://jestjs.io/docs/en/using-matchers).
 
 ## Why do I want this?
 
-Karma, Webpack and Jasmine are all great. They're all also quite powerful and each highly configurable. When creating and maintaining small modules, duplication of these configurations and dependencies is cumbersome.
+Karma, Rollup/Webpack and Jasmine are all great. They're all also quite powerful and each highly configurable. When creating and maintaining small modules, duplication of these configurations and dependencies is cumbersome.
 
 Karmatic is a zero-configuration wrapper around these tools with intelligent defaults, configuration auto-detection, and optimizations most configurations don't include.
 
@@ -15,7 +15,7 @@ Most importantly, Karmatic provides a (headless) browser test harness in a singl
 ## Installation
 
 ```sh
-npm i -D webpack karmatic
+npm i -D rollup karmatic
 ```
 
 ... then add a `test` script to your `package.json`:
@@ -29,6 +29,8 @@ npm i -D webpack karmatic
 ```
 
 ... now you can run your tests using `npm t`. Here's a [minimal example repo](https://gist.github.com/developit/acd8a075350eeb6574439e92888c50cf).
+
+Use Webpack instead? Replace `rollup` with `webpack` in the installation command above and Karmatic will use your webpack config to bundle instead
 
 ### Test File Patterns
 
@@ -95,6 +97,7 @@ Karmatic is pretty new! Here are some projects that have switched to it you may 
 [MIT](https://oss.ninja/mit/developit) © [developit](https://github.com/developit)
 
 [karma]: https://karma-runner.github.io
+[rollup]: https://rollupjs.org/
 [webpack]: https://webpack.js.org
 [jasmine]: https://jasmine.github.io
 [puppeteer]: https://github.com/GoogleChrome/puppeteer
