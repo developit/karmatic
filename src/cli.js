@@ -64,6 +64,6 @@ function run(str, opts, isWatch) {
 						'\n'
 				);
 			}
-			process.exit(err.code || 1);
+			process.exit(typeof err.code == 'number' ? err.code : 1);
 		});
 }

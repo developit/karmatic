@@ -8,10 +8,11 @@
 	"scripts": {
 		"prepare": "npm t",
 		"build": "microbundle --target node -f cjs --no-compress src/index.js src/cli.js src/appender.js",
-		"test:build": "node ./dist/cli.js run",
-		"test:watch": "node ./dist/cli.js watch --headless false",
-		"prettier": "prettier --write './**/*.{js,json,yml,md}'",
-		"test": "prettier --check \"./**/*.{js,json,yml,md}\" && eslint src test && npm run -s build && npm run -s test:build",
+		"test:build": "cd e2e-test/webpack-default && npm test",
+		"test:watch": "cd e2e-test/webpack-default && npm run test:watch",
+		"test:e2e": "node ./scripts/run-e2e-tests.mjs",
+		"prettier": "prettier --write './**/*.{js,mjs,json,yml,md}'",
+		"test": "prettier --check \"./**/*.{js,mjs,json,yml,md}\" && eslint src e2e-test && npm run -s build && npm run -s test:e2e",
 		"release": "npm run -s prepare && npm test && git commit -am $npm_package_version && git tag $npm_package_version && git push && git push --tags && npm publish"
 	},
 	"eslintConfig": {
@@ -32,14 +33,14 @@
 	"repository": "developit/karmatic",
 	"license": "MIT",
 	"devDependencies": {
+		"@kristoferbaxter/async": "^1.0.0",
 		"eslint": "^7.3.0",
 		"eslint-config-developit": "^1.2.0",
 		"eslint-config-prettier": "^6.11.0",
 		"microbundle": "^0.12.2",
+		"micromatch": "^4.0.2",
 		"prettier": "^1.19.1",
-		"puppeteer": "^4.0.1",
-		"webpack": "^4.43.0",
-		"workerize-loader": "^1.3.0"
+		"puppeteer": "^4.0.1"
 	},
 	"dependencies": {
 		"@babel/core": "^7.11.0",
