@@ -23,7 +23,7 @@ function getDefaultConfig(options) {
 				babelHelpers: 'bundled',
 				...babelConfig(options),
 			}),
-		].filter(Boolean),
+		],
 	};
 }
 

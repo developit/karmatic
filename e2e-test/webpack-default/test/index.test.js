@@ -1,6 +1,11 @@
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 describe('Basic test functions', () => {
+	it('should be bundled using webpack', () => {
+		// eslint-disable-line camelcase
+		expect(typeof __webpack_require__).toBe('function');
+	});
+
 	it('should work', () => {
 		expect(1).toEqual(1);
 	});
