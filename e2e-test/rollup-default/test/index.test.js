@@ -2,7 +2,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 describe('Basic test functions', () => {
 	it('should be not bundled using webpack', () => {
-		// eslint-disable-line camelcase
+		// eslint-disable-next-line camelcase
 		expect(typeof __webpack_require__).toBe('undefined');
 	});
 

@@ -2,7 +2,7 @@ import { box } from './index';
 
 describe('Box', () => {
 	it('should not be bundled using webpack', () => {
-		// eslint-disable-line camelcase
+		// eslint-disable-next-line camelcase
 		expect(typeof __webpack_require__).toBe('undefined');
 	});
 
