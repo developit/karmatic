@@ -7,7 +7,7 @@
 	"bin": "dist/cli.js",
 	"scripts": {
 		"prepare": "npm t",
-		"build": "microbundle --target node -f cjs --no-compress src/index.js src/cli.js src/appender.js",
+		"build": "microbundle --target node -f cjs --no-compress src/index.js src/cli.js src/appender.js && microbundle -f cjs --no-compress -i src/lib/jest-globals.js -o dist/lib/jest-globals.js",
 		"test:build": "cd e2e-test/webpack-default && npm test",
 		"test:watch": "cd e2e-test/webpack-default && npm run test:watch",
 		"test:e2e": "node ./scripts/run-e2e-tests.mjs",

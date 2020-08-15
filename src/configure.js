@@ -121,6 +121,8 @@ export default async function configure(options) {
 
 	const flags = ['--no-sandbox'];
 
+	const jestGlobalsPath = path.resolve(__dirname, './lib/jest-globals.js');
+
 	let generatedConfig = {
 		basePath: cwd,
 		plugins: PLUGINS.map((req) => require.resolve(req)),
@@ -185,7 +187,7 @@ export default async function configure(options) {
 				served: true,
 			},
 			{
-				pattern: path.resolve(__dirname, './lib/jest-globals.js'),
+				pattern: jestGlobalsPath,
 				watched: false,
 				included: true,
 				served: true,
@@ -209,6 +211,7 @@ export default async function configure(options) {
 		),
 
 		preprocessors: {
+			[jestGlobalsPath]: preprocessors,
 			[rootFiles + '/**/*']: preprocessors,
 			[rootFiles]: preprocessors,
 		},
