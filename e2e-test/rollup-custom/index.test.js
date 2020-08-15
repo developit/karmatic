@@ -1,9 +1,9 @@
-import { box } from '../src/index';
+import { box } from './index';
 
 describe('Box', () => {
-	it('should be bundled using webpack', () => {
+	it('should not be bundled using webpack', () => {
 		// eslint-disable-next-line camelcase
-		expect(typeof __webpack_require__).toBe('function');
+		expect(typeof __webpack_require__).toBe('undefined');
 	});
 
 	it('should have a __v property', () => {

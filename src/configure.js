@@ -3,7 +3,7 @@ import puppeteer from 'puppeteer';
 import chalk from 'chalk';
 import { tryRequire, cleanStack, readFile, readDir } from './lib/util';
 import { shouldUseWebpack, addWebpackConfig } from './webpack';
-// import minimatch from 'minimatch';
+import { addRollupConfig } from './rollup';
 
 /**
  * @typedef Options
@@ -13,12 +13,14 @@ import { shouldUseWebpack, addWebpackConfig } from './webpack';
  * @property {Boolean} [watch=false] - Start a continuous test server and retest when files change
  * @property {Boolean} [coverage=false] - Instrument and collect code coverage statistics
  * @property {Object} [webpackConfig] - Custom webpack configuration
+ * @property {Object} [rollupConfig] - Custom rollup configuration
+ * @property {string} [pragma] - JSX pragma to compile JSX with
  * @property {Boolean} [downlevel=false] - Downlevel/transpile syntax to ES5
  * @property {string} [chromeDataDir] - Use a custom Chrome profile directory
  *
  * @param {Options} options
  */
-export default function configure(options) {
+export default async function configure(options) {
 	let cwd = process.cwd(),
 		res = (file) => path.resolve(cwd, file);
 
@@ -218,6 +220,8 @@ export default function configure(options) {
 
 	if (shouldUseWebpack(options)) {
 		addWebpackConfig(generatedConfig, pkg, options);
+	} else {
+		await addRollupConfig(generatedConfig, pkg, options);
 	}
 
 	return generatedConfig;

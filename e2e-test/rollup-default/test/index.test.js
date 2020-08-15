@@ -1,9 +1,9 @@
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 describe('Basic test functions', () => {
-	it('should be bundled using webpack', () => {
+	it('should be not bundled using webpack', () => {
 		// eslint-disable-next-line camelcase
-		expect(typeof __webpack_require__).toBe('function');
+		expect(typeof __webpack_require__).toBe('undefined');
 	});
 
 	it('should work', () => {

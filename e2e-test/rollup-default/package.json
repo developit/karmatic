@@ -1,13 +1,12 @@
 {
-	"name": "karmatic-e2e-webpack-workerize-loader",
-	"description": "Test customer webpack loader testing in karmatic",
+	"name": "karmatic-e2e-rollup-default",
+	"description": "Test default rollup config in karmatic. Mildly complex src implementation to verify coverage works",
 	"private": true,
 	"scripts": {
 		"test:debug": "cross-env NODE_PRESERVE_SYMLINKS_MAIN=1 NODE_PRESERVE_SYMLINKS=1 node ./node_modules/karmatic/dist/cli.js debug"
 	},
 	"dependencies": {
-		"webpack": "^4.44.1",
-		"workerize-loader": "^1.3.0",
+		"rollup": "^2.3.0",
 		"karmatic": "file:../.."
 	},
 	"devDependencies": {
