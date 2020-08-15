@@ -51,6 +51,7 @@
 		"@rollup/plugin-babel": "^5.1.0",
 		"@rollup/plugin-commonjs": "^14.0.0",
 		"@rollup/plugin-node-resolve": "^8.4.0",
+		"@sinonjs/fake-timers": "^6.0.1",
 		"babel-loader": "^8.1.0",
 		"babel-plugin-istanbul": "^6.0.0",
 		"chalk": "^4.1.0",

@@ -1,6 +1,7 @@
 import './jest/nodeJSGlobals';
 import expect from 'expect';
 import { ModuleMocker } from 'jest-mock';
+import FakeTimers from './jest/fakeTimers';
 
 function notImplemented() {
 	throw Error(`Not Implemented`);
@@ -11,6 +12,7 @@ global.ModuleMocker = ModuleMocker;
 global.expect = expect;
 
 const moduleMocker = new ModuleMocker(global);
+const fakeTimers = new FakeTimers({ global });
 
 // @todo expect.extend() et al
 
@@ -27,12 +29,10 @@ global.jest = {
 		jasmine.addMatchers(matchers);
 	},
 	advanceTimersByTime(msToRun) {
-		// _getFakeTimers().advanceTimersByTime(msToRun);
-		notImplemented();
+		fakeTimers.advanceTimersByTime(msToRun);
 	},
 	advanceTimersToNextTimer(steps) {
-		// _getFakeTimers().advanceTimersToNextTimer(steps);
-		notImplemented();
+		fakeTimers.advanceTimersToNextTimer(steps);
 	},
 	autoMockOff: notImplemented,
 	autoMockOn: notImplemented,
@@ -40,10 +40,7 @@ global.jest = {
 		moduleMocker.clearAllMocks();
 		return this;
 	},
-	clearAllTimers() {
-		// _getFakeTimers().clearAllTimers();
-		notImplemented();
-	},
+	clearAllTimers: () => fakeTimers.clearAllTimers(),
 	createMockFromModule(moduleName) {
 		// return this._generateMock(from, moduleName);
 		notImplemented();
@@ -58,11 +55,10 @@ global.jest = {
 		// return this._generateMock(from, moduleName);
 		notImplemented();
 	},
-	getRealSystemTime: notImplemented,
-	getTimerCount() {
-		// return _getFakeTimers().getTimerCount();
-		notImplemented();
+	getRealSystemTime() {
+		return fakeTimers.getRealSystemTime();
 	},
+	getTimerCount: () => fakeTimers.getTimerCount(),
 	isMockFunction: moduleMocker.isMockFunction,
 	isolateModules: notImplemented,
 	mock: jasmine.createSpy, // @todo check
@@ -79,20 +75,27 @@ global.jest = {
 		return this;
 	},
 	retryTimes: notImplemented,
-	runAllImmediates() {
-		notImplemented();
-	},
-	runAllTicks: notImplemented,
-	runAllTimers: notImplemented,
-	runOnlyPendingTimers: notImplemented,
-	runTimersToTime: notImplemented,
+	runAllImmediates: notImplemented,
+	runAllTicks: () => fakeTimers.runAllTicks(),
+	runAllTimers: () => fakeTimers.runAllTimers(),
+	runOnlyPendingTimers: () => fakeTimers.runOnlyPendingTimers(),
+	runTimersToTime: (msToRun) => fakeTimers.advanceTimersByTime(msToRun),
 	setMock: notImplemented,
 	setSystemTime(now) {
-		notImplemented();
+		fakeTimers.setSystemTime(now);
 	},
-	setTimeout,
+	setTimeout(timeout) {
+		jasmine._DEFAULT_TIMEOUT_INTERVAL = timeout;
+		return this;
+	},
 	spyOn: moduleMocker.spyOn.bind(moduleMocker),
 	unmock: (mock) => mock.restore(), // @todo check
-	useFakeTimers: notImplemented,
-	useRealTimers: notImplemented,
+	useFakeTimers() {
+		fakeTimers.useFakeTimers();
+		return this;
+	},
+	useRealTimers() {
+		fakeTimers.useRealTimers();
+		return this;
+	},
 };
