@@ -1,6 +1,10 @@
+import expect from 'expect';
+
 function notImplemented() {
 	throw Error(`Not Implemented`);
 }
+
+global.expect = expect;
 
 // @todo expect.extend() et al
 

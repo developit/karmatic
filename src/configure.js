@@ -176,16 +176,6 @@ export default async function configure(options) {
 		],
 
 		files: [
-			// Inject Jest matchers:
-			{
-				pattern: path.resolve(
-					__dirname,
-					'../node_modules/expect/build-es5/index.js'
-				),
-				watched: false,
-				included: true,
-				served: true,
-			},
 			{
 				pattern: jestGlobalsPath,
 				watched: false,
