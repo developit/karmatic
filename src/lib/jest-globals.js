@@ -1,15 +1,27 @@
 import './jest/nodeJSGlobals';
 import expect from 'expect';
+import { ModuleMocker } from 'jest-mock';
 
 function notImplemented() {
 	throw Error(`Not Implemented`);
 }
 
 const global = window;
+global.ModuleMocker = ModuleMocker;
 global.expect = expect;
+
+const moduleMocker = new ModuleMocker(global);
 
 // @todo expect.extend() et al
 
+// @todo Consider this teardown function: https://github.com/facebook/jest/blob/e8b7f57e05e3c785c18a91556dcbc7212826a573/packages/jest-runtime/src/index.ts#L871
+
+// @todo - check if jasmine allows `it` without `describe`
+global.test = it;
+
+// @todo - add it.skip, etc.
+
+// Based on https://github.com/facebook/jest/blob/e8b7f57e05e3c785c18a91556dcbc7212826a573/packages/jest-runtime/src/index.ts#L1501-L1578
 global.jest = {
 	addMatchers(matchers) {
 		jasmine.addMatchers(matchers);
@@ -24,7 +36,10 @@ global.jest = {
 	},
 	autoMockOff: notImplemented,
 	autoMockOn: notImplemented,
-	clearAllMocks: notImplemented,
+	clearAllMocks() {
+		moduleMocker.clearAllMocks();
+		return this;
+	},
 	clearAllTimers() {
 		// _getFakeTimers().clearAllTimers();
 		notImplemented();
@@ -38,7 +53,7 @@ global.jest = {
 	doMock: notImplemented,
 	dontMock: notImplemented,
 	enableAutomock: notImplemented,
-	fn: jasmine.createSpy,
+	fn: moduleMocker.fn.bind(moduleMocker),
 	genMockFromModule(moduleName) {
 		// return this._generateMock(from, moduleName);
 		notImplemented();
@@ -48,18 +63,21 @@ global.jest = {
 		// return _getFakeTimers().getTimerCount();
 		notImplemented();
 	},
-	isMockFunction(fn) {
-		// check if spy/mock
-		notImplemented();
-	},
+	isMockFunction: moduleMocker.isMockFunction,
 	isolateModules: notImplemented,
 	mock: jasmine.createSpy, // @todo check
 	// requireActual: require,
 	requireMock: notImplemented,
-	resetAllMocks: notImplemented,
+	resetAllMocks() {
+		moduleMocker.resetAllMocks();
+		return this;
+	},
 	resetModuleRegistry: notImplemented,
 	resetModules: notImplemented,
-	restoreAllMocks: notImplemented,
+	restoreAllMocks() {
+		moduleMocker.restoreAllMocks();
+		return this;
+	},
 	retryTimes: notImplemented,
 	runAllImmediates() {
 		notImplemented();
@@ -73,7 +91,7 @@ global.jest = {
 		notImplemented();
 	},
 	setTimeout,
-	spyOn: jasmine.createSpy, // @todo check
+	spyOn: moduleMocker.spyOn.bind(moduleMocker),
 	unmock: (mock) => mock.restore(), // @todo check
 	useFakeTimers: notImplemented,
 	useRealTimers: notImplemented,
