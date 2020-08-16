@@ -1,9 +1,11 @@
+import './jest/nodeJSGlobals';
 import expect from 'expect';
 
 function notImplemented() {
 	throw Error(`Not Implemented`);
 }
 
+const global = window;
 global.expect = expect;
 
 // @todo expect.extend() et al
@@ -52,7 +54,7 @@ global.jest = {
 	},
 	isolateModules: notImplemented,
 	mock: jasmine.createSpy, // @todo check
-	requireActual: require,
+	// requireActual: require,
 	requireMock: notImplemented,
 	resetAllMocks: notImplemented,
 	resetModuleRegistry: notImplemented,
