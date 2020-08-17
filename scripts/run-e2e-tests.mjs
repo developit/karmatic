@@ -177,9 +177,10 @@ async function npmInstall(cwd, prefix) {
 /**
  * @param {string} projectPath
  * @param {string} prefix
+ * @param {Config} config
  * @returns {Promise<() => Promise<void>>}
  */
-async function setupTests(projectPath, prefix) {
+async function setupTests(projectPath, prefix, config) {
 	const name = path.basename(projectPath);
 	const log = (...msgs) => console.log(`${info(prefix)}`, ...msgs);
 
@@ -204,7 +205,9 @@ async function setupTests(projectPath, prefix) {
 		await fs.writeFile(pkgJsonPath, newContents, 'utf8');
 	}
 
-	await npmInstall(projectPath, prefix);
+	if (!config.skipInstall) {
+		await npmInstall(projectPath, prefix);
+	}
 
 	return async () => {
 		let cmd, args, opts;
@@ -236,9 +239,24 @@ async function setupTests(projectPath, prefix) {
 }
 
 /**
+ * @typedef Config
+ * @property {boolean} skipInstall
+ */
+const defaultConfig = {
+	skipInstall: false,
+};
+
+/**
  * @param {string[]} args
  */
 async function main(args) {
+	/**
+	 *
+	 */
+	const config = {
+		...defaultConfig,
+	};
+
 	if (args.includes('--help')) {
 		console.log(
 			`\nRun Karmatic E2E Tests.\n\n` +
@@ -247,6 +265,11 @@ async function main(args) {
 		);
 
 		return;
+	}
+
+	if (args.includes('--skip-install')) {
+		config.skipInstall = true;
+		args.splice(args.indexOf('--skip-install'), 1);
 	}
 
 	process.on('exit', (code) => {
@@ -280,7 +303,9 @@ async function main(args) {
 		// installing using symlinks
 		let runners = [];
 		for (let project of projects) {
-			runners.push(await setupTests(e2eRoot(project), getPrefix(project)));
+			runners.push(
+				await setupTests(e2eRoot(project), getPrefix(project), config)
+			);
 		}
 
 		console.log('Running karmatic...');

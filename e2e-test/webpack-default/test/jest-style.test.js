@@ -6,4 +6,10 @@ describe('jest-style', () => {
 			expect('How are you?').toEqual(expect.not.stringContaining(expected));
 		});
 	});
+
+	describe('jest.fn', () => {
+		it('exists', () => {
+			expect(typeof jest).toBe('object');
+		});
+	});
 });
