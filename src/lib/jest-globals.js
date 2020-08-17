@@ -1,27 +1,34 @@
 import './jest/nodeJSGlobals';
 import expect from 'expect';
 import { ModuleMocker } from 'jest-mock';
-import FakeTimers from './jest/fakeTimers';
+import ModernFakeTimers from '@jest/fake-timers/build/modernFakeTimers';
 
 function notImplemented() {
 	throw Error(`Not Implemented`);
 }
 
 const global = window;
+global.FakeTimers = ModernFakeTimers;
 global.ModuleMocker = ModuleMocker;
 global.expect = expect;
 
 const moduleMocker = new ModuleMocker(global);
-const fakeTimers = new FakeTimers({ global });
+const fakeTimers = new ModernFakeTimers({ global });
 
 // @todo expect.extend() et al
 
 // @todo Consider this teardown function: https://github.com/facebook/jest/blob/e8b7f57e05e3c785c18a91556dcbc7212826a573/packages/jest-runtime/src/index.ts#L871
+// @todo And this teardown function: https://github.com/facebook/jest/blob/9ffd368330a3aa05a7db9836be44891419b0b97d/packages/jest-environment-jsdom/src/index.ts#L106
+// Definitely need to auto dispose of fakeTimers.dispose in teardown
+afterEach(() => {
+	fakeTimers.dispose();
+});
 
 // @todo - check if jasmine allows `it` without `describe`
 global.test = it;
 
 // @todo - add it.skip, etc.
+// @todo - add alias for '@jest/globals' that allows users to import these globals: https://jestjs.io/docs/en/api
 
 // Based on https://github.com/facebook/jest/blob/e8b7f57e05e3c785c18a91556dcbc7212826a573/packages/jest-runtime/src/index.ts#L1501-L1578
 global.jest = {
