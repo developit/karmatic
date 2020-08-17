@@ -201,7 +201,7 @@ export default async function configure(options) {
 		),
 
 		preprocessors: {
-			[jestGlobalsPath]: preprocessors,
+			// [jestGlobalsPath]: preprocessors,
 			[rootFiles + '/**/*']: preprocessors,
 			[rootFiles]: preprocessors,
 		},

@@ -7,4 +7,4 @@
 // [jest-matcher-utils]:
 // https://npmfs.com/package/jest-matcher-utils/26.4.0/build/deepCyclicCopyReplaceable.js#L16
 
-// window.Buffer = Uint8Array;
+window.Buffer = Uint8Array;

@@ -114,7 +114,6 @@ export function addWebpackConfig(karmaConfig, pkg, options) {
 
 	karmaConfig.plugins.push(require.resolve('karma-webpack'));
 
-	const messageUtilPath = path.join(__dirname, 'jest/messageUtilFake.js');
 	karmaConfig.webpack = {
 		devtool: 'inline-source-map',
 		// devtool: 'module-source-map',
@@ -144,7 +143,6 @@ export function addWebpackConfig(karmaConfig, pkg, options) {
 			alias: webpackProp('resolve.alias', {
 				[pkg.name]: res('.'),
 				src: res('src'),
-				'jest-message-util': messageUtilPath,
 			}),
 		}),
 		resolveLoader: webpackProp('resolveLoader', {
@@ -155,7 +153,6 @@ export function addWebpackConfig(karmaConfig, pkg, options) {
 			alias: webpackProp('resolveLoader.alias', {
 				[pkg.name]: res('.'),
 				src: res('src'),
-				'jest-message-util': messageUtilPath,
 			}),
 		}),
 		plugins: (webpackConfig.plugins || []).filter((plugin) => {

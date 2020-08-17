@@ -1,11 +1,11 @@
-// import './jest/nodeJSGlobals';
+import './jest/nodeJSGlobals';
 import expect from 'expect';
 
 function notImplemented() {
 	throw Error(`Not Implemented`);
 }
 
-// const global = window;
+const global = window;
 global.expect = expect;
 
 // @todo expect.extend() et al

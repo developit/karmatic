@@ -9,7 +9,7 @@
 		"prepare": "npm t",
 		"build": "npm run build:node && npm run build:web",
 		"build:node": "microbundle --target node -f cjs --no-compress src/index.js src/cli.js src/appender.js",
-		"build:web": "microbundle -f cjs --no-compress -i src/lib/jest-globals.js -o dist/lib/jest-globals.js",
+		"build:web": "microbundle -f iife --no-compress --external none --alias jest-message-util=C:\\code\\github\\developit\\karmatic\\src\\lib\\jest\\messageUtilFake.js --define process.env.NODE_ENV=production -i src/lib/jest-globals.js -o dist/lib/jest-globals.js",
 		"test:build": "cd e2e-test/webpack-default && npm test",
 		"test:watch": "cd e2e-test/webpack-default && npm run test:watch",
 		"test:e2e": "node ./scripts/run-e2e-tests.mjs",
