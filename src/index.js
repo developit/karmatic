@@ -2,7 +2,7 @@ import { Server } from 'karma';
 import configure from './configure';
 
 export default async function karmatic(options) {
-	let config = configure(options);
+	let config = await configure(options);
 
 	if (!options.watch) config.singleRun = true;
 
