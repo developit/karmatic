@@ -1,13 +1,17 @@
 import { babelConfig } from './lib/babel';
 import { res, fileExists } from './lib/util';
 
+/** @type {<T>(t: T)=>T extends { default: any } ? T['default'] : T} */
+const getDefault = (mod) => mod.default || mod;
+
 /**
  * @param {import('./configure').Options} options
+ * @returns {import('rollup').RollupOptions}
  */
 function getDefaultConfig(options) {
-	let babel = require('@rollup/plugin-babel').default;
-	let commonjs = require('@rollup/plugin-commonjs');
-	let nodeResolve = require('@rollup/plugin-node-resolve').default;
+	let babel = getDefault(require('@rollup/plugin-babel'));
+	let commonjs = getDefault(require('@rollup/plugin-commonjs'));
+	let nodeResolve = getDefault(require('@rollup/plugin-node-resolve'));
 
 	return {
 		output: {

@@ -3,7 +3,8 @@
 	"description": "Test custom rollup config in karmatic",
 	"private": true,
 	"scripts": {
-		"test:debug": "cross-env NODE_PRESERVE_SYMLINKS_MAIN=1 NODE_PRESERVE_SYMLINKS=1 node ./node_modules/karmatic/dist/cli.js debug"
+		"test:debug": "cross-env NODE_PRESERVE_SYMLINKS_MAIN=1 NODE_PRESERVE_SYMLINKS=1 node ./node_modules/karmatic/dist/cli.js debug --no-webpack",
+		"test": "node ./node_modules/karmatic/dist/cli.js --no-webpack"
 	},
 	"dependencies": {
 		"@babel/core": "^7.10.3",

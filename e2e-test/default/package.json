@@ -3,12 +3,13 @@
 	"description": "Test default config in karmatic.",
 	"private": true,
 	"scripts": {
-		"test:debug": "cross-env NODE_PRESERVE_SYMLINKS_MAIN=1 NODE_PRESERVE_SYMLINKS=1 node ./node_modules/karmatic/dist/cli.js debug"
+		"test:debug": "cross-env NODE_PRESERVE_SYMLINKS_MAIN=1 NODE_PRESERVE_SYMLINKS=1 node ./node_modules/karmatic/dist/cli.js debug --no-webpack",
+		"test": "node ./node_modules/karmatic/dist/cli.js --no-webpack"
 	},
 	"dependencies": {
 		"karmatic": "file:../.."
 	},
 	"devDependencies": {
-		"cross-env": "^7.0.2"
+		"cross-env": "^7.0.3"
 	}
 }

@@ -12,6 +12,7 @@ import { addRollupConfig } from './rollup';
  * @property {Boolean} [headless=false] - Run in Headless Chrome?
  * @property {Boolean} [watch=false] - Start a continuous test server and retest when files change
  * @property {Boolean} [coverage=false] - Instrument and collect code coverage statistics
+ * @property {Boolean} [webpack] - Override webpack detection (true to force, false to disable)
  * @property {Object} [webpackConfig] - Custom webpack configuration
  * @property {Object} [rollupConfig] - Custom rollup configuration
  * @property {string} [pragma] - JSX pragma to compile JSX with
@@ -218,7 +219,10 @@ export default async function configure(options) {
 		},
 	};
 
-	if (shouldUseWebpack(options)) {
+	if (
+		options.webpack === true ||
+		(options.webpack !== false && shouldUseWebpack(options))
+	) {
 		addWebpackConfig(generatedConfig, pkg, options);
 	} else {
 		await addRollupConfig(generatedConfig, pkg, options);
