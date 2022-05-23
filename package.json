@@ -6,7 +6,7 @@
 	"module": "dist/index.m.js",
 	"bin": "dist/cli.js",
 	"scripts": {
-		"prepare": "npm t",
+		"prepublish": "npm t",
 		"build": "microbundle --target node -f cjs --no-compress src/index.js src/cli.js src/appender.js",
 		"test:build": "cd e2e-test/webpack-default && npm test",
 		"test:watch": "cd e2e-test/webpack-default && npm run test:watch",
@@ -40,15 +40,15 @@
 		"microbundle": "^0.12.2",
 		"micromatch": "^4.0.2",
 		"prettier": "^1.19.1",
-		"puppeteer": "^4.0.1"
+		"puppeteer": "^14.1.1"
 	},
 	"dependencies": {
 		"@babel/core": "^7.11.0",
 		"@babel/plugin-transform-react-jsx": "^7.10.3",
 		"@babel/preset-env": "^7.11.0",
 		"@rollup/plugin-babel": "^5.1.0",
-		"@rollup/plugin-commonjs": "^14.0.0",
-		"@rollup/plugin-node-resolve": "^8.4.0",
+		"@rollup/plugin-commonjs": "^22.0.0",
+		"@rollup/plugin-node-resolve": "^13.3.0",
 		"babel-loader": "^8.1.0",
 		"babel-plugin-istanbul": "^6.0.0",
 		"chalk": "^2.3.0",
@@ -62,14 +62,14 @@
 		"karma-firefox-launcher": "^1.3.0",
 		"karma-jasmine": "^4.0.0",
 		"karma-min-reporter": "^0.1.0",
-		"karma-rollup-preprocessor": "^7.0.5",
+		"karma-rollup-preprocessor": "7.0.7",
 		"karma-sauce-launcher": "^4.1.5",
 		"karma-sourcemap-loader": "^0.3.7",
 		"karma-spec-reporter": "0.0.32",
 		"karma-webpack": "^4.0.2",
 		"minimatch": "^3.0.4",
-		"rollup": "^2.3.4",
-		"sade": "^1.7.3",
+		"rollup": "^2.74.1",
+		"sade": "^1.8.1",
 		"simple-code-frame": "^1.0.0"
 	},
 	"peerDependencies": {
