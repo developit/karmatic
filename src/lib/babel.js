@@ -47,6 +47,6 @@ export function babelLoader(options) {
 		test: /\.jsx?$/,
 		exclude: /node_modules/,
 		loader: require.resolve('babel-loader'),
-		query: babelConfig(options),
+		options: babelConfig(options),
 	};
 }

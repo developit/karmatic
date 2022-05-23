@@ -10,7 +10,7 @@
 		"babel-loader": "8.1.0",
 		"babel-plugin-transform-rename-properties": "^0.1.0",
 		"karmatic": "file:../..",
-		"webpack": "^4.44.1"
+		"webpack": "^5.72.1"
 	},
 	"devDependencies": {
 		"cross-env": "^7.0.2"

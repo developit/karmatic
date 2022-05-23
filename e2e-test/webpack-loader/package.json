@@ -6,7 +6,7 @@
 		"test:debug": "cross-env NODE_PRESERVE_SYMLINKS_MAIN=1 NODE_PRESERVE_SYMLINKS=1 node ./node_modules/karmatic/dist/cli.js debug"
 	},
 	"dependencies": {
-		"webpack": "^4.44.1",
+		"webpack": "^5.72.1",
 		"workerize-loader": "^1.3.0",
 		"karmatic": "file:../.."
 	},
