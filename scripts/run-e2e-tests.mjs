@@ -5,7 +5,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import chalk from 'chalk';
 import micromatch from 'micromatch';
-import { pool } from '@kristoferbaxter/async';
 
 // @ts-ignore
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -165,7 +164,13 @@ async function npmInstall(cwd, prefix) {
 	const name = path.basename(cwd);
 	console.log(`${info(prefix)} Installing packages for "${name}"...`);
 
-	const cp = execFile(npmCmd, ['install', '--no-fund'], { cwd });
+	const cp = execFile(
+		npmCmd,
+		['install', '--no-fund', '--no-shrinkwrap', '--no-audit'],
+		{
+			cwd,
+		}
+	);
 
 	prefix = prefix || `[${name}]`;
 	cp.stdout.pipe(createPrefixTransform(info(prefix))).pipe(process.stdout);
