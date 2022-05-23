@@ -162,6 +162,7 @@ export function addWebpackConfig(karmaConfig, pkg, options) {
 			);
 		}),
 		node: webpackProp('node', {}),
+		target: 'web',
 		performance: {
 			hints: false,
 		},
